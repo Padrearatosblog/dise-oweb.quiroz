@@ -13,6 +13,7 @@ type Particle = {
 }
 
 const TEXT = 'QUIROZ'
+const ISOTYPE_SRC = `${import.meta.env.BASE_URL}isotipo-quiroz.jpg`
 
 const services = [
   {
@@ -217,7 +218,7 @@ export function QuirozHero() {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-white/8 bg-black/55 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
           <a href="#inicio" className="flex items-center gap-3" aria-label="Quiroz inicio">
-            <img src="/isotipo-quiroz.jpg" alt="" className="h-9 w-9 object-cover opacity-90" />
+            <img src={ISOTYPE_SRC} alt="" className="h-9 w-9 object-cover opacity-90" />
             <span className="text-sm font-semibold uppercase tracking-[0.24em] text-white">Quiroz</span>
           </a>
           <div className="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.18em] text-white/54 md:flex">
@@ -255,7 +256,7 @@ export function QuirozHero() {
           </div>
 
           <img
-            src="/isotipo-quiroz.jpg"
+            src={ISOTYPE_SRC}
             alt="Isotipo Quiroz"
             className="mb-3 h-auto w-20 object-contain opacity-95 sm:w-24 md:mb-4 md:w-28 lg:w-32"
           />
