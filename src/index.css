@@ -78,8 +78,15 @@
 
   body {
     @apply bg-background text-foreground;
+    background: #050403;
+    color: #ffffff;
     margin: 0;
     min-width: 320px;
     min-height: 100svh;
+  }
+
+  #root {
+    min-height: 100svh;
+    background: #050403;
   }
 }
