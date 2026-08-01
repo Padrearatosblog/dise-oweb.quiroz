@@ -1,508 +1,331 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import {
+  ArrowDown,
   ArrowUpRight,
-  Camera,
   Check,
-  Clock3,
-  Monitor,
+  Code2,
+  Layout,
+  Menu,
+  MessageCircle,
   MousePointer2,
   QrCode,
   Sparkles,
-  TrendingUp,
+  X,
 } from 'lucide-react'
 
-type Particle = {
-  x: number
-  y: number
-  tx: number
-  ty: number
-  vx: number
-  vy: number
-  size: number
-  phase: number
-}
-
-const TEXT = 'QUIROZ'
 const BASE_URL = import.meta.env.BASE_URL
-const ISOTYPE_SRC = `${BASE_URL}isotipo-quiroz.jpg`
 const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
-
-const services = [
-  {
-    title: 'Diseño web',
-    description: 'Webs premium, rápidas y enfocadas en convertir visitas en reservas, llamadas o mensajes.',
-    icon: Monitor,
-  },
-  {
-    title: 'Menús QR',
-    description: 'Cartas digitales claras, elegantes y multiidioma para mejorar la experiencia en mesa.',
-    icon: QrCode,
-  },
-  {
-    title: 'Contenido visual',
-    description: 'Criterio visual para mostrar el ambiente, producto y personalidad real del negocio.',
-    icon: Camera,
-  },
-  {
-    title: 'Presencia online',
-    description: 'Estructura, textos y llamadas a la acción para que el cliente entienda y actúe rápido.',
-    icon: TrendingUp,
-  },
-]
+const LOGO_SRC = `${BASE_URL}logo-quiroz.svg`
 
 const projects = [
   {
-    type: 'Hostelería',
-    title: 'Web para restaurantes',
-    description: 'Hero potente, reservas, carta digital, ubicación, horarios y WhatsApp visibles desde móvil.',
+    number: '01',
+    eyebrow: 'Hostelería · Web & Reservas',
+    title: 'Restaurante con una presencia a la altura de su cocina.',
+    description:
+      'Una experiencia digital que convierte el ambiente del local en deseo: carta, reservas, ubicación y contacto sin fricción.',
+    color: '#9c4f37',
+    visual: 'restaurant',
   },
   {
-    type: 'San Fermín',
-    title: 'Cartas QR multiidioma',
-    description: 'Menús ES/EN/FR con bloques numerados, alérgenos y explicación de platos típicos.',
+    number: '02',
+    eyebrow: 'San Fermín · Producto digital',
+    title: 'Carta QR multiidioma pensada para horas punta.',
+    description:
+      'Menús claros en español, inglés y francés, con alérgenos, platos típicos y una navegación diseñada para decidir rápido.',
+    color: '#c8a66c',
+    visual: 'menu',
   },
   {
-    type: 'Local',
-    title: 'Comercios y servicios',
-    description: 'Páginas sobrias, comerciales y fáciles de mantener para negocios reales de Pamplona.',
+    number: '03',
+    eyebrow: 'Negocio local · Identidad digital',
+    title: 'Una web que convierte experiencia en confianza.',
+    description:
+      'Estructura comercial, mensajes directos y una estética propia para profesionales que necesitan dejar de parecer uno más.',
+    color: '#62664d',
+    visual: 'studio',
+  },
+]
+
+const services = [
+  {
+    icon: Layout,
+    title: 'Diseño web estratégico',
+    description: 'Dirección visual, arquitectura y mensajes pensados para que tu negocio se entienda y se recuerde.',
+  },
+  {
+    icon: Code2,
+    title: 'Desarrollo a medida',
+    description: 'Una web rápida, responsive y cuidada hasta el último detalle. Sin sensación de plantilla genérica.',
+  },
+  {
+    icon: QrCode,
+    title: 'Cartas y experiencias QR',
+    description: 'Menús digitales atractivos, fáciles de actualizar y preparados para clientes internacionales.',
+  },
+  {
+    icon: MousePointer2,
+    title: 'Conversión y contenido',
+    description: 'Textos, jerarquía y llamadas a la acción que acompañan al usuario hasta contactar, reservar o comprar.',
   },
 ]
 
 const process = [
-  'Entiendo el negocio y el cliente real',
-  'Defino una dirección visual con personalidad',
-  'Diseño mobile first y textos que venden',
-  'Publico, reviso y dejo la web preparada',
+  ['01', 'Descubrir', 'Entiendo el negocio, la competencia y qué debe sentir el cliente al llegar.'],
+  ['02', 'Dirigir', 'Defino una dirección visual y verbal propia, coherente con tu valor real.'],
+  ['03', 'Construir', 'Diseño y desarrollo cada sección con prioridad absoluta para móvil.'],
+  ['04', 'Lanzar', 'Reviso, optimizo y dejo una base preparada para crecer contigo.'],
 ]
 
-export function QuirozHero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const particlesRef = useRef<Particle[]>([])
-  const animationFrameRef = useRef<number | undefined>(undefined)
-  const pointerRef = useRef({ x: -9999, y: -9999, active: false })
+function ProjectVisual({ type }: { type: string }) {
+  if (type === 'restaurant') {
+    return (
+      <div className="project-scene restaurant-scene" aria-hidden="true">
+        <div className="restaurant-light" />
+        <div className="restaurant-window">
+          <span>BRASA</span>
+          <p>Cocina honesta.<br />Producto local.</p>
+          <i>Reservar mesa →</i>
+        </div>
+        <div className="restaurant-table" />
+      </div>
+    )
+  }
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const context = canvas.getContext('2d')
-    if (!context) return
-
-    const buildParticles = () => {
-      const rect = canvas.getBoundingClientRect()
-      const dpr = window.devicePixelRatio || 1
-      const width = Math.max(320, rect.width)
-      const height = Math.max(160, rect.height)
-
-      canvas.width = Math.floor(width * dpr)
-      canvas.height = Math.floor(height * dpr)
-      context.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      const sampleCanvas = document.createElement('canvas')
-      const sampleContext = sampleCanvas.getContext('2d')
-      if (!sampleContext) return
-
-      sampleCanvas.width = Math.floor(width)
-      sampleCanvas.height = Math.floor(height)
-      sampleContext.clearRect(0, 0, width, height)
-      sampleContext.fillStyle = '#ffffff'
-      sampleContext.textAlign = 'center'
-      sampleContext.textBaseline = 'middle'
-
-      const fontSize = width < 640 ? Math.min(width * 0.17, height * 0.48) : Math.min(width * 0.18, height * 0.7)
-      sampleContext.font = `900 ${fontSize}px Georgia, "Times New Roman", serif`
-      sampleContext.letterSpacing = `${width < 640 ? 2 : Math.max(4, width * 0.01)}px`
-      sampleContext.fillText(TEXT, width / 2, height / 2)
-
-      const imageData = sampleContext.getImageData(0, 0, width, height)
-      const gap = width < 640 ? 5 : 6
-      const particles: Particle[] = []
-
-      for (let y = 0; y < height; y += gap) {
-        for (let x = 0; x < width; x += gap) {
-          const alpha = imageData.data[(Math.floor(y) * Math.floor(width) + Math.floor(x)) * 4 + 3]
-
-          if (alpha > 90) {
-            particles.push({
-              x: x + (Math.random() - 0.5) * 18,
-              y: y + (Math.random() - 0.5) * 18,
-              tx: x,
-              ty: y,
-              vx: 0,
-              vy: 0,
-              size: Math.random() * 1.15 + 0.9,
-              phase: Math.random() * Math.PI * 2,
-            })
-          }
-        }
-      }
-
-      particlesRef.current = particles
-    }
-
-    const animate = () => {
-      const rect = canvas.getBoundingClientRect()
-      const width = rect.width
-      const height = rect.height
-      const time = Date.now() * 0.001
-
-      context.clearRect(0, 0, width, height)
-
-      const glow = context.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.52)
-      glow.addColorStop(0, 'rgba(231, 190, 112, 0.14)')
-      glow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-      context.fillStyle = glow
-      context.fillRect(0, 0, width, height)
-
-      for (const particle of particlesRef.current) {
-        const driftX = Math.cos(time + particle.phase) * 1.25
-        const driftY = Math.sin(time * 1.15 + particle.phase) * 1.25
-        let targetX = particle.tx + driftX
-        let targetY = particle.ty + driftY
-
-        if (pointerRef.current.active) {
-          const dx = particle.x - pointerRef.current.x
-          const dy = particle.y - pointerRef.current.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-          const radius = Math.min(width * 0.2, 140)
-
-          if (distance < radius && distance > 0) {
-            const force = (1 - distance / radius) * 30
-            targetX += (dx / distance) * force
-            targetY += (dy / distance) * force
-          }
-        }
-
-        particle.vx += (targetX - particle.x) * 0.048
-        particle.vy += (targetY - particle.y) * 0.048
-        particle.vx *= 0.83
-        particle.vy *= 0.83
-        particle.x += particle.vx
-        particle.y += particle.vy
-
-        context.beginPath()
-        context.fillStyle = 'rgba(238, 203, 134, 0.94)'
-        context.shadowColor = 'rgba(238, 203, 134, 0.38)'
-        context.shadowBlur = 7
-        context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        context.fill()
-      }
-
-      animationFrameRef.current = requestAnimationFrame(animate)
-    }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      pointerRef.current = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-        active: true,
-      }
-    }
-
-    const handlePointerLeave = () => {
-      pointerRef.current.active = false
-    }
-
-    buildParticles()
-    animate()
-
-    const resizeObserver = new ResizeObserver(buildParticles)
-    resizeObserver.observe(canvas)
-    canvas.addEventListener('pointermove', handlePointerMove)
-    canvas.addEventListener('pointerleave', handlePointerLeave)
-
-    return () => {
-      resizeObserver.disconnect()
-      canvas.removeEventListener('pointermove', handlePointerMove)
-      canvas.removeEventListener('pointerleave', handlePointerLeave)
-
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-  }, [])
+  if (type === 'menu') {
+    return (
+      <div className="project-scene menu-scene" aria-hidden="true">
+        <div className="phone phone-back">
+          <span>MENU / 02</span>
+          <strong>Para<br />compartir</strong>
+          <i>ES · EN · FR</i>
+        </div>
+        <div className="phone phone-front">
+          <span>CASA QUIROZ</span>
+          <strong>La carta</strong>
+          <div className="menu-line" />
+          <div className="menu-line short" />
+          <div className="menu-line" />
+          <b>Escanea. Elige. Disfruta.</b>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#050403] text-white">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_12%,rgba(221,172,88,0.12),transparent_28%),radial-gradient(circle_at_82%_0%,rgba(128,65,28,0.16),transparent_32%),linear-gradient(180deg,#050403_0%,#0b0805_48%,#050403_100%)]" />
+    <div className="project-scene studio-scene" aria-hidden="true">
+      <div className="studio-grid" />
+      <span className="studio-kicker">ESTUDIO / 2026</span>
+      <strong>Ideas que<br /><em>se sienten.</em></strong>
+      <div className="studio-orbit"><span>Q</span></div>
+      <p>Estrategia · Diseño · Desarrollo</p>
+    </div>
+  )
+}
 
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/8 bg-[#050403]/72 backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:h-20 md:px-8">
-          <a href="#inicio" className="flex items-center gap-3" aria-label="Quiroz inicio">
-            <img src={ISOTYPE_SRC} alt="" className="h-9 w-9 object-cover opacity-95 md:h-10 md:w-10" />
-            <span className="text-sm font-semibold uppercase tracking-[0.24em] text-white">Quiroz</span>
-          </a>
+function Interactive3DShowcase() {
+  const [tilt, setTilt] = useState({ x: -4, y: 7 })
 
-          <div className="hidden items-center gap-8 text-xs font-medium uppercase tracking-[0.2em] text-white/50 lg:flex">
-            <a className="transition hover:text-[#f0d098]" href="#servicios">
-              Servicios
-            </a>
-            <a className="transition hover:text-[#f0d098]" href="#proyectos">
-              Proyectos
-            </a>
-            <a className="transition hover:text-[#f0d098]" href="#proceso">
-              Proceso
-            </a>
-            <a className="transition hover:text-[#f0d098]" href="#contacto">
-              Contacto
-            </a>
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5
+    setTilt({ x: y * -12, y: x * 16 })
+  }
+
+  return (
+    <div
+      className="showcase-3d"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => setTilt({ x: -4, y: 7 })}
+      style={{ '--tilt-x': `${tilt.x}deg`, '--tilt-y': `${tilt.y}deg` } as React.CSSProperties}
+    >
+      <div className="showcase-hud hud-top"><span>Q / 001</span><span>INTERACTIVE DESIGN</span></div>
+      <div className="showcase-grid" />
+      <div className="showcase-glow" />
+      <div className="scene-3d">
+        <div className="orbit orbit-one" /><div className="orbit orbit-two" />
+        <div className="portrait-monolith">
+          <div className="monolith-face monolith-front">
+            <img src={PHOTO_SRC} alt="Bryan Quiroz, diseñador y desarrollador web" />
+            <div className="scan-line" />
+            <div className="face-index">QUIROZ® — 2026</div>
           </div>
+          <div className="monolith-face monolith-side"><span>DESIGN<br />WITH<br />INTENT</span></div>
+          <div className="monolith-face monolith-top" />
+        </div>
+        <div className="float-card card-strategy"><small>01</small><strong>ESTRATEGIA</strong><span>Que se entienda</span></div>
+        <div className="float-card card-design"><small>02</small><strong>DISEÑO</strong><span>Que se recuerde</span></div>
+        <div className="float-card card-code"><small>03</small><strong>CÓDIGO</strong><span>Que funcione</span></div>
+        <div className="scene-badge"><span>+</span><b>WEB / 3D / MOTION</b></div>
+      </div>
+      <div className="showcase-hud hud-bottom"><span>MOVE YOUR CURSOR</span><span>X {Math.round(tilt.y * 10)} · Y {Math.round(tilt.x * 10)}</span></div>
+    </div>
+  )
+}
 
-          <a
-            href="#contacto"
-            className="inline-flex h-10 items-center gap-2 border border-[#d9ad62]/40 bg-[#d9ad62]/8 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#f0d098] transition hover:border-[#f0d098] hover:text-white md:h-11 md:px-5"
-          >
-            Empezar
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
+export function QuirozHero() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const reveal = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
+      { threshold: 0.12 },
+    )
+    document.querySelectorAll('.reveal').forEach((element) => reveal.observe(element))
+    return () => reveal.disconnect()
+  }, [])
+
+  const closeMenu = () => setMenuOpen(false)
+
+  return (
+    <main className="site-shell">
+      <header className="topbar">
+        <a href="#inicio" className="brand" aria-label="Quiroz, inicio">
+          <span>QUIROZ</span>
+        </a>
+
+        <nav className="desktop-nav" aria-label="Navegación principal">
+          <a href="#proyectos">Proyectos</a>
+          <a href="#servicios">Servicios</a>
+          <a href="#proceso">Proceso</a>
         </nav>
+
+        <a href="#contacto" className="nav-cta">Hablemos <ArrowUpRight size={15} /></a>
+        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú" aria-expanded={menuOpen}>
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+
+        {menuOpen && (
+          <nav className="mobile-nav" aria-label="Navegación móvil">
+            <a href="#proyectos" onClick={closeMenu}>Proyectos</a>
+            <a href="#servicios" onClick={closeMenu}>Servicios</a>
+            <a href="#proceso" onClick={closeMenu}>Proceso</a>
+            <a href="#contacto" onClick={closeMenu}>Hablemos</a>
+          </nav>
+        )}
       </header>
 
-      <section id="inicio" className="relative px-5 pb-20 pt-24 md:px-8 md:pb-28 md:pt-32">
-        <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-black/80 to-transparent" />
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-3 border border-[#d9ad62]/18 bg-white/[0.025] px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#e9c986]/78">
-              <Sparkles className="h-3.5 w-3.5" />
-              Webs con esencia para negocios reales
-            </div>
-
-            <div className="mt-8 flex items-center gap-5">
-              <img src={ISOTYPE_SRC} alt="Isotipo Quiroz" className="h-20 w-20 object-contain opacity-95 md:h-24 md:w-24" />
-              <div className="h-px flex-1 bg-gradient-to-r from-[#d9ad62]/45 to-transparent" />
-            </div>
-
-            <h1 className="mt-8 max-w-4xl text-4xl font-semibold leading-[0.98] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
-              Diseño web premium para hostelería, comercios y servicios locales.
-            </h1>
-
-            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-white/62">
-              Creo webs, cartas QR y experiencias digitales que transmiten confianza desde el primer vistazo y ayudan
-              a que el cliente actúe: reservar, escribir, visitar o comprar.
-            </p>
-
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <a
-                href="#proyectos"
-                className="group relative inline-flex min-h-14 items-center justify-center overflow-hidden border border-[#d9ad62]/45 bg-[#d9ad62]/10 px-8 text-sm font-semibold uppercase tracking-[0.18em] text-[#f0d098] transition hover:border-[#f0d098] hover:text-white"
-              >
-                <span className="relative z-10">Ver proyectos</span>
-                <span className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-[#d9ad62]/22 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-              </a>
-              <a
-                href="#servicios"
-                className="inline-flex min-h-14 items-center justify-center gap-2 px-2 text-sm font-semibold uppercase tracking-[0.18em] text-white/56 transition hover:text-white"
-              >
-                Qué puedo crear
-                <ArrowUpRight className="h-4 w-4" />
-              </a>
-            </div>
-
-            <div className="mt-10 grid max-w-2xl grid-cols-3 border-y border-white/10 py-5">
-              {[
-                ['Mobile', 'first real'],
-                ['QR', 'multiidioma'],
-                ['Pamplona', 'negocio local'],
-              ].map(([value, label]) => (
-                <div key={value} className="border-r border-white/10 px-3 last:border-r-0 first:pl-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#f0d098]">{value}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/38">{label}</p>
-                </div>
-              ))}
-            </div>
+      <section id="inicio" className="hero-section">
+        <div className="hero-glow" />
+        <div className="hero-copy reveal is-visible">
+          <p className="eyebrow"><span /> Diseñador web & director digital · Pamplona</p>
+          <h1>Tu negocio no necesita<br />otra web. Necesita<br /><em>ser inolvidable.</em></h1>
+          <div className="hero-bottom">
+            <p>Diseño experiencias digitales premium que hacen que negocios locales se vean, se entiendan y vendan como grandes marcas.</p>
+            <a href="#proyectos" className="circle-link" aria-label="Ver proyectos"><ArrowDown /></a>
           </div>
+        </div>
 
-          <div className="relative z-10">
-            <div className="absolute -left-4 top-10 hidden h-48 w-48 rounded-full border border-[#d9ad62]/12 lg:block" />
-            <div className="relative ml-auto max-w-[520px] border border-white/10 bg-black/38 p-3 shadow-2xl shadow-black/50">
-              <div className="relative aspect-[4/5] overflow-hidden bg-[#100c08]">
-                <img
-                  src={PHOTO_SRC}
-                  alt="Bryan Quiroz trabajando en una web"
-                  className="h-full w-full object-cover object-[50%_45%] opacity-88 saturate-[0.92]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/16" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                  <div className="border border-white/12 bg-black/58 p-4 backdrop-blur-md">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#f0d098]">Bryan Quiroz</p>
-                    <p className="mt-2 text-sm leading-relaxed text-white/66">
-                      Diseño desde la experiencia real de negocio: claridad, imagen y velocidad para vender mejor.
-                    </p>
-                  </div>
-                </div>
+        <div className="portrait-wrap reveal is-visible">
+          <div className="portrait-label"><Sparkles size={14} /> Laboratorio digital interactivo</div>
+          <Interactive3DShowcase />
+        </div>
+
+        <div className="hero-marquee" aria-hidden="true">
+          <div>ESTRATEGIA <i>✦</i> DISEÑO WEB <i>✦</i> DESARROLLO <i>✦</i> EXPERIENCIAS QR <i>✦</i> ESTRATEGIA <i>✦</i> DISEÑO WEB <i>✦</i></div>
+        </div>
+      </section>
+
+      <section className="manifesto section-pad">
+        <div className="section-number">01 / Enfoque</div>
+        <div className="manifesto-copy reveal">
+          <p className="eyebrow"><span /> No hago páginas bonitas</p>
+          <h2>Construyo la percepción que tu negocio <em>merece.</em></h2>
+          <div className="manifesto-detail">
+            <p>Una buena web no empieza con colores. Empieza entendiendo por qué deberían elegirte a ti. Después, cada palabra, cada imagen y cada interacción trabajan para demostrarlo.</p>
+            <div className="pill-list"><span>Claridad</span><span>Carácter</span><span>Conversión</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="proyectos" className="projects-section section-pad">
+        <div className="section-heading reveal">
+          <div>
+            <p className="eyebrow"><span /> Trabajo seleccionado</p>
+            <h2>Proyectos con<br /><em>intención.</em></h2>
+          </div>
+          <p>Una selección de experiencias digitales para hostelería, servicios y negocios que quieren competir por valor, no por precio.</p>
+        </div>
+
+        <div className="project-list">
+          {projects.map((project) => (
+            <article className="project-card reveal" key={project.number} style={{ '--project-color': project.color } as React.CSSProperties}>
+              <div className="project-visual"><ProjectVisual type={project.visual} /></div>
+              <div className="project-copy">
+                <div className="project-meta"><span>{project.eyebrow}</span><span>{project.number}</span></div>
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <button className="project-link" type="button" aria-label={`${project.title}. Enlace próximamente`}>
+                  Ver proyecto <ArrowUpRight size={17} /> <small>Próximamente</small>
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative z-10 mx-auto mt-14 max-w-7xl border-y border-white/8 py-8">
-          <div className="mb-4 flex items-center justify-between gap-4 text-xs uppercase tracking-[0.2em] text-white/40">
-            <span>Firma interactiva</span>
-            <span className="inline-flex items-center gap-2">
-              <MousePointer2 className="h-3.5 w-3.5 text-[#d9ad62]" />
-              Mueve el cursor
-            </span>
-          </div>
-          <h2 className="sr-only">QUIROZ</h2>
-          <canvas
-            ref={canvasRef}
-            aria-hidden="true"
-            className="h-[150px] w-full touch-none sm:h-[190px] md:h-[250px] lg:h-[290px]"
-          />
-          <div className="mt-5 flex flex-col items-center justify-center gap-3 text-center md:flex-row">
-            <span className="text-xl font-thin uppercase tracking-[0.3em] text-[#f0d098]/90 md:text-3xl">
-              Digital Studio
-            </span>
-            <span className="hidden h-px w-16 bg-[#d9ad62]/40 md:block" />
-            <span className="max-w-xl text-sm leading-relaxed text-white/48">
-              Diseño web premium, cartas QR y experiencias digitales para restaurantes y negocios locales.
-            </span>
-          </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section id="servicios" className="border-y border-white/8 bg-[#090705] px-5 py-18 md:px-8 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-end">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#d9ad62]">Servicios</p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
-                Lo que necesita una marca local para parecer seria y vender mejor.
-              </h2>
-            </div>
-            <p className="max-w-2xl text-base leading-relaxed text-white/58 md:justify-self-end md:text-lg">
-              No diseño webs para decorar. Diseño una presencia digital que ordena la información, mejora la
-              percepción del negocio y facilita que el cliente llegue a la acción correcta.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service) => {
-              const Icon = service.icon
-
-              return (
-                <article
-                  key={service.title}
-                  className="group border border-white/10 bg-black/30 p-6 transition duration-300 hover:-translate-y-1 hover:border-[#d9ad62]/40 hover:bg-[#120d07]"
-                >
-                  <div className="mb-8 flex h-12 w-12 items-center justify-center border border-[#d9ad62]/30 bg-[#d9ad62]/8 text-[#f0d098] transition group-hover:scale-105">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">{service.title}</h3>
-                  <p className="mt-4 text-sm leading-relaxed text-white/54">{service.description}</p>
-                </article>
-              )
-            })}
-          </div>
+      <section id="servicios" className="services-section section-pad">
+        <div className="services-intro reveal">
+          <p className="eyebrow light"><span /> Lo que hago</p>
+          <h2>De una idea a una presencia digital que <em>trabaja por ti.</em></h2>
         </div>
-      </section>
-
-      <section id="proyectos" className="px-5 py-18 md:px-8 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#d9ad62]">Proyectos destacados</p>
-              <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
-                Piezas digitales para negocios que necesitan claridad y presencia.
-              </h2>
-            </div>
-            <a
-              href="#contacto"
-              className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#f0d098] transition hover:text-white"
-            >
-              Pedir propuesta
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </div>
-
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {projects.map((project, index) => (
-              <article key={project.title} className="min-h-80 border border-white/10 bg-[#090705] p-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d9ad62]">
-                    {project.type}
-                  </span>
-                  <span className="text-sm text-white/28">0{index + 1}</span>
-                </div>
-                <h3 className="mt-12 text-2xl font-semibold text-white">{project.title}</h3>
-                <p className="mt-5 text-base leading-relaxed text-white/56">{project.description}</p>
-                <div className="mt-10 h-px w-full bg-gradient-to-r from-[#d9ad62]/50 to-transparent" />
+        <div className="services-grid">
+          {services.map((service, index) => {
+            const Icon = service.icon
+            return (
+              <article className="service-card reveal" key={service.title}>
+                <div className="service-top"><span>0{index + 1}</span><Icon /></div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
               </article>
-            ))}
+            )
+          })}
+        </div>
+      </section>
+
+      <section id="proceso" className="process-section section-pad">
+        <div className="process-heading reveal">
+          <p className="eyebrow"><span /> Cómo trabajaremos</p>
+          <h2>Simple por fuera.<br /><em>Rigurosamente pensado.</em></h2>
+        </div>
+        <div className="process-list">
+          {process.map(([number, title, description]) => (
+            <article className="process-item reveal" key={number}>
+              <span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight />
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="about-section section-pad">
+        <div className="about-photo reveal"><img src={PHOTO_SRC} alt="Bryan Quiroz trabajando" /><span>Diseñando desde Pamplona</span></div>
+        <div className="about-copy reveal">
+          <p className="eyebrow"><span /> Sobre mí</p>
+          <h2>Tu proyecto no pasa por cinco departamentos. <em>Hablamos tú y yo.</em></h2>
+          <p>Soy Bryan Quiroz. Combino estrategia, diseño y desarrollo para crear webs con personalidad y objetivos claros. Me implico en cada proyecto como si el negocio también fuera mío.</p>
+          <div className="about-points">
+            <span><Check size={16} /> Comunicación directa</span>
+            <span><Check size={16} /> Diseño sin plantillas</span>
+            <span><Check size={16} /> Atención al detalle</span>
           </div>
         </div>
       </section>
 
-      <section id="proceso" className="border-y border-white/8 bg-[#0b0805] px-5 py-18 md:px-8 md:py-24">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#d9ad62]">Proceso</p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
-              Un proceso simple, pero con intención en cada decisión.
-            </h2>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/58 md:text-lg">
-              Cada bloque se plantea pensando en cómo mira un cliente desde el móvil: qué entiende, qué siente y qué
-              puede hacer sin perder tiempo.
-            </p>
-          </div>
-
-          <div className="grid gap-3">
-            {process.map((item, index) => (
-              <div key={item} className="flex items-start gap-5 border border-white/10 bg-black/26 p-5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-[#d9ad62]/30 text-sm font-semibold text-[#f0d098]">
-                  0{index + 1}
-                </span>
-                <div>
-                  <p className="text-lg font-medium text-white">{item}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-white/44">
-                    {index === 0 && 'Antes de diseñar, ordeno objetivos, prioridades y tipo de cliente.'}
-                    {index === 1 && 'Defino una estética propia, no una plantilla genérica.'}
-                    {index === 2 && 'Diseño primero para móvil, con jerarquía clara y textos comerciales.'}
-                    {index === 3 && 'Dejo una base sólida para publicar, revisar y seguir creciendo.'}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <section id="contacto" className="contact-section">
+        <div className="contact-orbit" aria-hidden="true"><span>Q</span></div>
+        <p className="eyebrow light"><span /> Tu próximo paso</p>
+        <h2>¿Creamos algo<br /><em>difícil de ignorar?</em></h2>
+        <p className="contact-copy">Cuéntame qué tienes en mente. Te responderé con una primera dirección clara para convertirlo en una web que venda tu verdadero valor.</p>
+        <a href="mailto:" className="contact-button"><MessageCircle size={19} /> Cuéntame tu proyecto <ArrowUpRight size={18} /></a>
+        <div className="contact-note">Respuesta personal · Sin compromiso · Propuesta a medida</div>
       </section>
 
-      <section id="contacto" className="relative px-5 py-18 md:px-8 md:py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,173,98,0.16),transparent_42%)]" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 border border-white/10 bg-[#080604]/88 p-6 shadow-2xl shadow-black/40 md:p-10 lg:grid-cols-[1fr_0.85fr] lg:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#d9ad62]">Contacto</p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
-              Si tu negocio se ve mejor, se vende mejor.
-            </h2>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/58 md:text-lg">
-              Construyamos una web con imagen profesional, rapidez, carta digital si la necesitas y una experiencia
-              clara para el cliente.
-            </p>
-          </div>
-
-          <div>
-            <div className="space-y-4">
-              {['Diseño premium y accesible', 'Enfoque real para hostelería', 'Mobile first y preparado para vender'].map(
-                (item) => (
-                  <div key={item} className="flex items-center gap-3 text-white/70">
-                    <Check className="h-5 w-5 text-[#d9ad62]" />
-                    <span>{item}</span>
-                  </div>
-                ),
-              )}
-            </div>
-            <a
-              href="https://wa.me/"
-              className="mt-8 inline-flex min-h-14 w-full items-center justify-center gap-2 border border-[#d9ad62]/45 bg-[#d9ad62]/10 px-8 text-sm font-semibold uppercase tracking-[0.18em] text-[#f0d098] transition hover:border-[#f0d098] hover:text-white sm:w-auto"
-            >
-              Hablar por WhatsApp
-              <Clock3 className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-      </section>
+      <footer>
+        <img src={LOGO_SRC} alt="Quiroz" />
+        <p>Diseño web con estrategia, carácter y detalle.</p>
+        <div><span>© 2026 Quiroz</span><a href="#inicio">Volver arriba ↑</a></div>
+      </footer>
     </main>
   )
 }
