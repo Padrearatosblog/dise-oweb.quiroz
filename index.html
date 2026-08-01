@@ -10,19 +10,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module">
-      const isGithubPages = window.location.hostname.endsWith('github.io')
-
-      if (isGithubPages) {
-        const base = '/dise-oweb.quiroz/'
-        const stylesheet = document.createElement('link')
-        stylesheet.rel = 'stylesheet'
-        stylesheet.href = `${base}assets/index.css`
-        document.head.appendChild(stylesheet)
-        import(`${base}assets/main.js`)
-      } else {
-        import('/src/main.tsx')
-      }
-    </script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
