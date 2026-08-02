@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import brandPosterSrc from '../../LOGO.jpeg'
+import brandPosterSrc from '../../quiroz-sculpture.webp'
 import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
 import brandSignatureSrc from '../../logo-quiroz.jpg'
 import {
@@ -300,7 +300,7 @@ export function QuirozHero() {
         <div className="brand-poster-stage reveal" aria-label="Identidad visual Quiroz">
           <div className="brand-poster-back"><img src={brandIsotypeSrc} alt="Isotipo dorado de Quiroz" /></div>
           <div className="brand-poster-card">
-            <img src={brandPosterSrc} alt="Identidad de Quiroz, diseño web para hostelería" />
+            <img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" />
             <div className="brand-poster-shine" />
           </div>
           <div className="brand-poster-caption"><span>QUIROZ / NAVARRA</span><span>BRAND SYSTEM 01</span></div>
