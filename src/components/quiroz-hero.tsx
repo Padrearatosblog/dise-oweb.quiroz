@@ -86,7 +86,7 @@ const process = [
 
 const qrShowcase = [
   { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco' },
-  { src: qrQuirozSrc, name: 'Quiroz Cocina', alt: 'Diseño de menú QR para Quiroz Cocina Navarra' },
+  { src: qrQuirozSrc, name: 'Quiroz Restobar', alt: 'Diseño de menú QR para Quiroz Restobar en Navarra' },
   { src: qrAmySrc, name: 'Amy', alt: 'Diseño QR personalizado para recuerdos de Amy' },
 ]
 
