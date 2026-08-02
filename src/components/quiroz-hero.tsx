@@ -10,6 +10,8 @@ import {
   ArrowDown,
   ArrowUpRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Code2,
   Layout,
   Menu,
@@ -82,6 +84,57 @@ const process = [
   ['04', 'Lanzar', 'Reviso, optimizo y dejo una base preparada para crecer contigo.'],
 ]
 
+const qrShowcase = [
+  { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco' },
+  { src: qrQuirozSrc, name: 'Quiroz Cocina', alt: 'Diseño de menú QR para Quiroz Cocina Navarra' },
+  { src: qrAmySrc, name: 'Amy', alt: 'Diseño QR personalizado para recuerdos de Amy' },
+]
+
+function QrCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [current, setCurrent] = useState(0)
+
+  const goTo = (index: number) => {
+    const next = Math.max(0, Math.min(qrShowcase.length - 1, index))
+    const card = trackRef.current?.children[next] as HTMLElement | undefined
+    card?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    setCurrent(next)
+  }
+
+  const handleScroll = () => {
+    const track = trackRef.current
+    if (!track) return
+    const center = track.scrollLeft + track.clientWidth / 2
+    const cards = Array.from(track.children) as HTMLElement[]
+    const closest = cards.reduce((best, card, index) => {
+      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center)
+      return distance < best.distance ? { index, distance } : best
+    }, { index: 0, distance: Number.POSITIVE_INFINITY })
+    setCurrent(closest.index)
+  }
+
+  return (
+    <div className="project-scene qr-carousel" aria-label="Galería de diseños QR">
+      <div className="qr-carousel-track" ref={trackRef} onScroll={handleScroll}>
+        {qrShowcase.map((item, index) => (
+          <figure className={`qr-slide ${index === current ? 'active' : ''}`} key={item.name}>
+            <img src={item.src} alt={item.alt} />
+            <figcaption><span>0{index + 1}</span>{item.name}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <div className="qr-carousel-controls">
+        <div className="qr-carousel-dots" aria-hidden="true">{qrShowcase.map((item, index) => <i className={index === current ? 'active' : ''} key={item.name} />)}</div>
+        <div>
+          <button type="button" onClick={() => goTo(current - 1)} disabled={current === 0} aria-label="Diseño anterior"><ChevronLeft /></button>
+          <button type="button" onClick={() => goTo(current + 1)} disabled={current === qrShowcase.length - 1} aria-label="Diseño siguiente"><ChevronRight /></button>
+        </div>
+      </div>
+      <span className="qr-swipe-hint">Desliza para explorar ↔</span>
+    </div>
+  )
+}
+
 function ProjectVisual({ type }: { type: string }) {
   if (type === 'restaurant') {
     return (
@@ -93,13 +146,7 @@ function ProjectVisual({ type }: { type: string }) {
   }
 
   if (type === 'menu') {
-    return (
-      <div className="project-scene qr-gallery">
-        <figure className="qr-piece qr-piece-left"><img src={qrCasaPacoSrc} alt="Cartel QR multilingüe para Casa Paco" /><figcaption>Casa Paco</figcaption></figure>
-        <figure className="qr-piece qr-piece-main"><img src={qrQuirozSrc} alt="Diseño de menú QR para Quiroz Cocina Navarra" /><figcaption>Quiroz Cocina</figcaption></figure>
-        <figure className="qr-piece qr-piece-right"><img src={qrAmySrc} alt="Diseño QR personalizado para recuerdos de Amy" /><figcaption>Amy</figcaption></figure>
-      </div>
-    )
+    return <QrCarousel />
   }
 
   return (
