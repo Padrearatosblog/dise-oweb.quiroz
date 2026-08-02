@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://padrearatosblog.github.io/dise-oweb.quiroz/sitemap.xml

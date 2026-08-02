@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import brandPosterSrc from '../../quiroz-sculpture.webp'
 import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
-import brandSignatureSrc from '../../logo-quiroz.jpg'
 import {
   ArrowDown,
   ArrowUpRight,
@@ -52,7 +51,7 @@ const services = [
   {
     icon: Layout,
     title: 'Diseño web estratégico',
-    description: 'Dirección visual, arquitectura y mensajes pensados para que tu negocio se entienda y se recuerde.',
+    description: 'Páginas web a medida para hostelería y negocios locales: dirección visual, arquitectura y mensajes que generan confianza.',
   },
   {
     icon: Code2,
@@ -66,8 +65,8 @@ const services = [
   },
   {
     icon: MousePointer2,
-    title: 'Conversión y contenido',
-    description: 'Textos, jerarquía y llamadas a la acción que acompañan al usuario hasta contactar, reservar o comprar.',
+    title: 'SEO local y conversión',
+    description: 'Contenido y estructura para mejorar tu visibilidad en Pamplona y Navarra y convertir visitas en contactos, reservas o ventas.',
   },
 ]
 
@@ -259,10 +258,10 @@ export function QuirozHero() {
         <Interactive3DShowcase />
         <div className="hero-glow" />
         <div className="hero-copy reveal is-visible">
-          <p className="eyebrow"><span /> Bryans Quiroz · Diseñador web · Pamplona</p>
+          <p className="eyebrow"><span /> Diseño web en Pamplona · Bryans Quiroz</p>
           <h1>Tu negocio merece<br />una presencia<br /><em>imposible de ignorar.</em></h1>
           <div className="hero-bottom">
-            <p>Diseño experiencias digitales premium que elevan la percepción de tu marca y convierten atención en clientes.</p>
+            <p>Creo páginas web a medida para hostelería y negocios locales que elevan tu marca, mejoran tu visibilidad y convierten atención en clientes.</p>
             <a href="#proyectos" className="hero-primary">Explorar proyectos <ArrowUpRight size={17} /></a>
           </div>
         </div>
@@ -313,7 +312,7 @@ export function QuirozHero() {
             <p className="eyebrow"><span /> Trabajo seleccionado</p>
             <h2>Proyectos con<br /><em>intención.</em></h2>
           </div>
-          <p>Una selección de experiencias digitales para hostelería, servicios y negocios que quieren competir por valor, no por precio.</p>
+            <p>Diseño web para restaurantes, hostelería, servicios y negocios locales de Pamplona que quieren atraer clientes y competir por valor, no por precio.</p>
         </div>
 
         <div className="project-list">
@@ -385,12 +384,15 @@ export function QuirozHero() {
         <p className="eyebrow light"><span /> Tu próximo paso</p>
         <h2>¿Creamos algo<br /><em>difícil de ignorar?</em></h2>
         <p className="contact-copy">Cuéntame qué tienes en mente. Te responderé con una primera dirección clara para convertirlo en una web que venda tu verdadero valor.</p>
-        <a href="mailto:" className="contact-button"><MessageCircle size={19} /> Cuéntame tu proyecto <ArrowUpRight size={18} /></a>
+        <a href="https://github.com/Padrearatosblog" target="_blank" rel="noreferrer" className="contact-button"><MessageCircle size={19} /> Conoce mi trabajo <ArrowUpRight size={18} /></a>
         <div className="contact-note">Respuesta personal · Sin compromiso · Propuesta a medida</div>
       </section>
 
       <footer>
-        <img src={brandSignatureSrc} alt="Quiroz Digital Studio" />
+        <a href="#inicio" className="footer-brand" aria-label="Quiroz Digital Studio, volver al inicio">
+          <img src={brandIsotypeSrc} alt="" />
+          <span><b>QUIROZ</b><small>Digital Studio</small></span>
+        </a>
         <p>Diseño web con estrategia, carácter y detalle.</p>
         <div><span>© 2026 Quiroz</span><a href="#inicio">Volver arriba ↑</a></div>
       </footer>
