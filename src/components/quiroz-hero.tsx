@@ -5,7 +5,6 @@ import qrAmySrc from '../../qr-amy.webp'
 import qrCasaPacoSrc from '../../qr-casa-paco.webp'
 import qrMaitagarriSrc from '../../qr-maitagarri.webp'
 import qrQuirozSrc from '../../qr-quiroz-cocina.webp'
-import servicesPosterSrc from '../../quiroz-services.webp'
 import {
   ArrowDown,
   ArrowUpRight,
@@ -157,9 +156,29 @@ function ProjectVisual({ type }: { type: string }) {
   }
 
   return (
-    <div className="project-scene real-work-scene studio-work">
-      <img src={servicesPosterSrc} alt="Identidad y servicios de Quiroz Digital Studio" />
-      <div className="real-work-label"><span>Sistema visual</span><b>QUIROZ DIGITAL STUDIO</b></div>
+    <div className="project-scene studio-logo-reveal" aria-label="Animación de la identidad Quiroz Digital Studio">
+      <div className="studio-reveal-grid" />
+      <div className="studio-reveal-mark" aria-hidden="true">
+        <div className="studio-gold-arrival" />
+        <svg viewBox="0 0 240 240" role="presentation">
+          <circle className="studio-q-circle" cx="118" cy="111" r="72" />
+          <path className="studio-q-tail" d="M91 169 C119 159 144 167 159 187 C177 208 199 210 220 199" />
+          <path className="studio-branch" d="M126 151 C146 147 161 137 176 119" />
+          <ellipse className="studio-leaf leaf-one" cx="143" cy="141" rx="4" ry="9" transform="rotate(-52 143 141)" />
+          <ellipse className="studio-leaf leaf-two" cx="154" cy="133" rx="4" ry="9" transform="rotate(-42 154 133)" />
+          <ellipse className="studio-leaf leaf-three" cx="165" cy="123" rx="4" ry="9" transform="rotate(-30 165 123)" />
+        </svg>
+        <img className="studio-final-mark" src={brandIsotypeSrc} alt="" />
+        <div className="studio-mark-glint" />
+      </div>
+      <div className="studio-wordmark" aria-hidden="true">
+        <div className="studio-quiroz-letters">
+          {'QUIROZ'.split('').map((letter, index) => <span key={letter + index} style={{ '--letter': index } as React.CSSProperties}>{letter}</span>)}
+        </div>
+        <div className="studio-subtitle">Digital Studio</div>
+        <p>Webs con esencia para negocios reales</p>
+      </div>
+      <div className="studio-reveal-caption"><span>Identidad en movimiento</span><b>QUIROZ / 2026</b></div>
     </div>
   )
 }
