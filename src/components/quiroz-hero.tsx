@@ -279,8 +279,8 @@ export function QuirozHero() {
     document.title = 'Diseño web en Pamplona para hostelería | Quiroz'
     const reveal = new IntersectionObserver(
       (entries) => entries.forEach((entry) => {
-        const isAnimatedIdentity = entry.target.querySelector('.studio-logo-reveal')
-        if (isAnimatedIdentity) {
+        const shouldReplay = entry.target.matches('.brand-poster-stage') || entry.target.querySelector('.studio-logo-reveal')
+        if (shouldReplay) {
           entry.target.classList.toggle('is-visible', entry.isIntersecting)
           return
         }
@@ -368,10 +368,10 @@ export function QuirozHero() {
           </div>
         </div>
         <div className="brand-poster-stage reveal" aria-label="Identidad visual Quiroz">
-          <div className="brand-poster-back"><img src={brandIsotypeSrc} alt="Isotipo dorado de Quiroz" /></div>
           <div className="brand-poster-card">
             <img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" />
             <div className="brand-poster-shine" />
+            <div className="brand-poster-focus" aria-hidden="true" />
           </div>
           <div className="brand-poster-caption"><span>QUIROZ / NAVARRA</span><span>BRAND SYSTEM 01</span></div>
         </div>
