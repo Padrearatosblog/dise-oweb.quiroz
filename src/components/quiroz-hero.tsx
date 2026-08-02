@@ -92,7 +92,14 @@ const qrShowcase = [
 
 function QrCarousel() {
   const trackRef = useRef<HTMLDivElement>(null)
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState(1)
+
+  useEffect(() => {
+    const track = trackRef.current
+    const card = track?.children[1] as HTMLElement | undefined
+    if (!track || !card) return
+    track.scrollTo({ left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2, behavior: 'auto' })
+  }, [])
 
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(qrShowcase.length - 1, index))
