@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import brandPosterSrc from '../../quiroz-sculpture.webp'
 import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
+import qrAmySrc from '../../qr-amy.webp'
+import qrCasaPacoSrc from '../../qr-casa-paco.webp'
+import qrMaitagarriSrc from '../../qr-maitagarri.webp'
+import qrQuirozSrc from '../../qr-quiroz-cocina.webp'
+import servicesPosterSrc from '../../quiroz-services.webp'
 import {
   ArrowDown,
   ArrowUpRight,
@@ -20,28 +25,28 @@ const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
 const projects = [
   {
     number: '01',
-    eyebrow: 'Hostelería · Web & Reservas',
-    title: 'Restaurante con una presencia a la altura de su cocina.',
+    eyebrow: 'Hostelería · Identidad & Web',
+    title: 'Una web que se siente como entrar por la puerta.',
     description:
-      'Una experiencia digital que convierte el ambiente del local en deseo: carta, reservas, ubicación y contacto sin fricción.',
+      'El ambiente, la carta y la forma de recibir al cliente llevados a una experiencia digital sencilla, cálida y fácil de recordar.',
     color: '#9c4f37',
     visual: 'restaurant',
   },
   {
     number: '02',
-    eyebrow: 'San Fermín · Producto digital',
-    title: 'Carta QR multiidioma pensada para horas punta.',
+    eyebrow: 'Hostelería · Menús digitales QR',
+    title: 'Menús QR pensados para cada negocio y cada cliente.',
     description:
-      'Menús claros en español, inglés y francés, con alérgenos, platos típicos y una navegación diseñada para decidir rápido.',
+      'No se trata de colocar un código en una mesa. Diseño una pieza que forma parte del local y permite consultar la carta en varios idiomas sin complicaciones.',
     color: '#c8a66c',
     visual: 'menu',
   },
   {
     number: '03',
-    eyebrow: 'Negocio local · Identidad digital',
-    title: 'Una web que convierte experiencia en confianza.',
+    eyebrow: 'Estudio · Identidad digital',
+    title: 'Una identidad clara, cuidada y fácil de reconocer.',
     description:
-      'Estructura comercial, mensajes directos y una estética propia para profesionales que necesitan dejar de parecer uno más.',
+      'Una imagen coherente en la web, los menús y cada punto de contacto para que el negocio transmita confianza desde el primer vistazo.',
     color: '#62664d',
     visual: 'studio',
   },
@@ -80,45 +85,27 @@ const process = [
 function ProjectVisual({ type }: { type: string }) {
   if (type === 'restaurant') {
     return (
-      <div className="project-scene restaurant-scene" aria-hidden="true">
-        <div className="restaurant-light" />
-        <div className="restaurant-window">
-          <span>BRASA</span>
-          <p>Cocina honesta.<br />Producto local.</p>
-          <i>Reservar mesa →</i>
-        </div>
-        <div className="restaurant-table" />
+      <div className="project-scene real-work-scene restaurant-work">
+        <img src={qrMaitagarriSrc} alt="Diseño de carta QR para Asador Maitagarri en Pamplona" />
+        <div className="real-work-label"><span>Trabajo real</span><b>ASADOR MAITAGARRI / PAMPLONA</b></div>
       </div>
     )
   }
 
   if (type === 'menu') {
     return (
-      <div className="project-scene menu-scene" aria-hidden="true">
-        <div className="phone phone-back">
-          <span>MENU / 02</span>
-          <strong>Para<br />compartir</strong>
-          <i>ES · EN · FR</i>
-        </div>
-        <div className="phone phone-front">
-          <span>CASA QUIROZ</span>
-          <strong>La carta</strong>
-          <div className="menu-line" />
-          <div className="menu-line short" />
-          <div className="menu-line" />
-          <b>Escanea. Elige. Disfruta.</b>
-        </div>
+      <div className="project-scene qr-gallery">
+        <figure className="qr-piece qr-piece-left"><img src={qrCasaPacoSrc} alt="Cartel QR multilingüe para Casa Paco" /><figcaption>Casa Paco</figcaption></figure>
+        <figure className="qr-piece qr-piece-main"><img src={qrQuirozSrc} alt="Diseño de menú QR para Quiroz Cocina Navarra" /><figcaption>Quiroz Cocina</figcaption></figure>
+        <figure className="qr-piece qr-piece-right"><img src={qrAmySrc} alt="Diseño QR personalizado para recuerdos de Amy" /><figcaption>Amy</figcaption></figure>
       </div>
     )
   }
 
   return (
-    <div className="project-scene studio-scene" aria-hidden="true">
-      <div className="studio-grid" />
-      <span className="studio-kicker">ESTUDIO / 2026</span>
-      <strong>Ideas que<br /><em>se sienten.</em></strong>
-      <div className="studio-orbit"><span>Q</span></div>
-      <p>Estrategia · Diseño · Desarrollo</p>
+    <div className="project-scene real-work-scene studio-work">
+      <img src={servicesPosterSrc} alt="Identidad y servicios de Quiroz Digital Studio" />
+      <div className="real-work-label"><span>Sistema visual</span><b>QUIROZ DIGITAL STUDIO</b></div>
     </div>
   )
 }
