@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import brandPosterSrc from '../../LOGO.jpeg'
+import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
+import brandSignatureSrc from '../../logo-quiroz.jpg'
 import {
   ArrowDown,
   ArrowUpRight,
@@ -9,13 +12,11 @@ import {
   MessageCircle,
   MousePointer2,
   QrCode,
-  Sparkles,
   X,
 } from 'lucide-react'
 
 const BASE_URL = import.meta.env.BASE_URL
 const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
-const LOGO_SRC = `${BASE_URL}logo-quiroz.svg`
 
 const projects = [
   {
@@ -124,42 +125,89 @@ function ProjectVisual({ type }: { type: string }) {
 }
 
 function Interactive3DShowcase() {
-  const [tilt, setTilt] = useState({ x: -4, y: 7 })
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const sceneRef = useRef<HTMLDivElement>(null)
 
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect()
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5
-    setTilt({ x: y * -12, y: x * 16 })
-  }
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const scene = sceneRef.current
+    const context = canvas?.getContext('2d')
+    if (!canvas || !scene || !context) return
+    let frame = 0
+    let width = 0
+    let height = 0
+    let px = 0
+    let py = 0
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const stars = Array.from({ length: 86 }, (_, i) => ({ x: ((i * 73) % 997) / 997, y: ((i * 151) % 613) / 613, size: .4 + (i % 4) * .35, phase: i * .71 }))
+
+    const resize = () => {
+      const bounds = scene.getBoundingClientRect()
+      const ratio = Math.min(window.devicePixelRatio || 1, 2)
+      width = bounds.width
+      height = bounds.height
+      canvas.width = Math.round(width * ratio)
+      canvas.height = Math.round(height * ratio)
+      context.setTransform(ratio, 0, 0, ratio, 0, 0)
+    }
+    const mountain = (side: number, depth: number, color: string, horizon: number) => {
+      context.beginPath()
+      context.moveTo(side < 0 ? 0 : width, horizon + 25)
+      for (let i = 0; i <= 8; i += 1) {
+        const part = i / 8
+        const x = side < 0 ? part * width * .49 : width - part * width * .49
+        const rise = Math.sin(part * Math.PI) * height * depth
+        context.lineTo(x + px * side * depth * 18, horizon - rise + Math.sin(i * 2.1 + depth * 10) * height * .025)
+      }
+      context.lineTo(width / 2, horizon + 25)
+      context.closePath()
+      context.fillStyle = color
+      context.fill()
+    }
+    const draw = (time: number) => {
+      const t = time * .00035
+      const horizon = height * .59
+      const sky = context.createLinearGradient(0, 0, 0, height)
+      sky.addColorStop(0, '#080706'); sky.addColorStop(.55, '#1d110b'); sky.addColorStop(1, '#050403')
+      context.fillStyle = sky; context.fillRect(0, 0, width, height)
+      stars.forEach((star) => {
+        context.fillStyle = `rgba(238,196,126,${.16 + Math.sin(t * 3 + star.phase) * .1})`
+        context.beginPath(); context.arc(star.x * width + px * 9, star.y * horizon * .9 + py * 5, star.size, 0, Math.PI * 2); context.fill()
+      })
+      const glow = context.createRadialGradient(width / 2, horizon * .88, 0, width / 2, horizon * .88, width * .43)
+      glow.addColorStop(0, 'rgba(218,166,91,.34)'); glow.addColorStop(.38, 'rgba(132,72,37,.10)'); glow.addColorStop(1, 'transparent')
+      context.fillStyle = glow; context.fillRect(0, 0, width, horizon)
+      mountain(-1, .36, '#120c09', horizon); mountain(1, .39, '#100b08', horizon)
+      mountain(-1, .2, '#2a1710', horizon); mountain(1, .23, '#23130e', horizon)
+      const water = context.createLinearGradient(0, horizon, 0, height)
+      water.addColorStop(0, '#673b25'); water.addColorStop(.18, '#21130d'); water.addColorStop(1, '#050403')
+      context.fillStyle = water; context.fillRect(0, horizon, width, height - horizon)
+      for (let row = 0; row < 38; row += 1) {
+        const p = row / 38; const y = horizon + p * p * (height - horizon); const spread = width * (.045 + p * .54); const wave = Math.sin(t * 4 + row * 1.7) * 12 * p
+        context.strokeStyle = `rgba(229,177,96,${.18 * (1 - p) + .025})`; context.lineWidth = .5 + p
+        context.beginPath(); context.moveTo(width / 2 - spread + wave, y); context.lineTo(width / 2 + spread + wave, y); context.stroke()
+      }
+      if (!reduceMotion) frame = requestAnimationFrame(draw)
+    }
+    const onPointer = (event: PointerEvent) => {
+      px = event.clientX / window.innerWidth - .5; py = event.clientY / window.innerHeight - .5
+      scene.style.setProperty('--scene-x', `${px * 20}px`); scene.style.setProperty('--scene-y', `${py * 13}px`)
+    }
+    resize(); window.addEventListener('resize', resize); window.addEventListener('pointermove', onPointer, { passive: true }); draw(0)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('resize', resize); window.removeEventListener('pointermove', onPointer) }
+  }, [])
 
   return (
-    <div
-      className="showcase-3d"
-      onPointerMove={handlePointerMove}
-      onPointerLeave={() => setTilt({ x: -4, y: 7 })}
-      style={{ '--tilt-x': `${tilt.x}deg`, '--tilt-y': `${tilt.y}deg` } as React.CSSProperties}
-    >
-      <div className="showcase-hud hud-top"><span>Q / 001</span><span>INTERACTIVE DESIGN</span></div>
-      <div className="showcase-grid" />
-      <div className="showcase-glow" />
-      <div className="scene-3d">
-        <div className="orbit orbit-one" /><div className="orbit orbit-two" />
-        <div className="portrait-monolith">
-          <div className="monolith-face monolith-front">
-            <img src={PHOTO_SRC} alt="Bryan Quiroz, diseñador y desarrollador web" />
-            <div className="scan-line" />
-            <div className="face-index">QUIROZ® — 2026</div>
-          </div>
-          <div className="monolith-face monolith-side"><span>DESIGN<br />WITH<br />INTENT</span></div>
-          <div className="monolith-face monolith-top" />
-        </div>
-        <div className="float-card card-strategy"><small>01</small><strong>ESTRATEGIA</strong><span>Que se entienda</span></div>
-        <div className="float-card card-design"><small>02</small><strong>DISEÑO</strong><span>Que se recuerde</span></div>
-        <div className="float-card card-code"><small>03</small><strong>CÓDIGO</strong><span>Que funcione</span></div>
-        <div className="scene-badge"><span>+</span><b>WEB / 3D / MOTION</b></div>
+    <div className="quiroz-scene" ref={sceneRef} aria-label="Escena digital tridimensional de Quiroz">
+      <canvas ref={canvasRef} aria-hidden="true" />
+      <div className="scene-vignette" />
+      <div className="scene-values" aria-hidden="true"><span className="active">Esencia</span><span>Estrategia</span><span>Diseño</span><span>Precisión</span><span>Impacto</span></div>
+      <div className="q-totem" aria-hidden="true">
+        <div className="q-aura" /><div className="q-ring ring-one" /><div className="q-ring ring-two" />
+        <div className="q-core"><img src={brandIsotypeSrc} alt="" /></div><div className="q-shadow" />
       </div>
-      <div className="showcase-hud hud-bottom"><span>MOVE YOUR CURSOR</span><span>X {Math.round(tilt.y * 10)} · Y {Math.round(tilt.x * 10)}</span></div>
+      <div className="scene-coordinate coordinate-left">QUIROZ / NAVARRA<br />42.8125° N</div>
+      <div className="scene-coordinate coordinate-right">DIGITAL CRAFT<br />EST. 2026</div>
     </div>
   )
 }
@@ -182,7 +230,8 @@ export function QuirozHero() {
     <main className="site-shell">
       <header className="topbar">
         <a href="#inicio" className="brand" aria-label="Quiroz, inicio">
-          <span>QUIROZ</span>
+          <img src={brandIsotypeSrc} alt="" />
+          <span><b>QUIROZ</b><small>Digital studio</small></span>
         </a>
 
         <nav className="desktop-nav" aria-label="Navegación principal">
@@ -207,23 +256,18 @@ export function QuirozHero() {
       </header>
 
       <section id="inicio" className="hero-section">
+        <Interactive3DShowcase />
         <div className="hero-glow" />
         <div className="hero-copy reveal is-visible">
-          <p className="eyebrow"><span /> Diseñador web & director digital · Pamplona</p>
-          <h1>Tu negocio no necesita<br />otra web. Necesita<br /><em>ser inolvidable.</em></h1>
+          <p className="eyebrow"><span /> Bryans Quiroz · Diseñador web · Pamplona</p>
+          <h1>Tu negocio merece<br />una presencia<br /><em>imposible de ignorar.</em></h1>
           <div className="hero-bottom">
-            <p>Diseño experiencias digitales premium que hacen que negocios locales se vean, se entiendan y vendan como grandes marcas.</p>
-            <a href="#proyectos" className="circle-link" aria-label="Ver proyectos"><ArrowDown /></a>
+            <p>Diseño experiencias digitales premium que elevan la percepción de tu marca y convierten atención en clientes.</p>
+            <a href="#proyectos" className="hero-primary">Explorar proyectos <ArrowUpRight size={17} /></a>
           </div>
         </div>
-
-        <div className="portrait-wrap reveal is-visible">
-          <div className="portrait-label"><Sparkles size={14} /> Laboratorio digital interactivo</div>
-          <Interactive3DShowcase />
-        </div>
-
-        <div className="hero-marquee" aria-hidden="true">
-          <div>ESTRATEGIA <i>✦</i> DISEÑO WEB <i>✦</i> DESARROLLO <i>✦</i> EXPERIENCIAS QR <i>✦</i> ESTRATEGIA <i>✦</i> DISEÑO WEB <i>✦</i></div>
+        <div className="hero-status" aria-hidden="true">
+          <span><i /> Experiencia interactiva</span><span>Desliza para descubrir</span><ArrowDown size={14} />
         </div>
       </section>
 
@@ -236,6 +280,30 @@ export function QuirozHero() {
             <p>Una buena web no empieza con colores. Empieza entendiendo por qué deberían elegirte a ti. Después, cada palabra, cada imagen y cada interacción trabajan para demostrarlo.</p>
             <div className="pill-list"><span>Claridad</span><span>Carácter</span><span>Conversión</span></div>
           </div>
+        </div>
+      </section>
+
+      <section id="identidad" className="brand-world section-pad">
+        <div className="brand-world-copy reveal">
+          <p className="eyebrow light"><span /> Una identidad con raíz</p>
+          <h2>Elegancia sin distancia.<br /><em>Carácter sin ruido.</em></h2>
+          <p>
+            Quiroz nace del cuidado por los detalles, de la hostelería vivida desde dentro y de una forma muy personal
+            de trabajar: escuchar primero, ordenar después y diseñar solo lo que aporta valor.
+          </p>
+          <div className="brand-values">
+            <span><b>01</b> Cálido</span>
+            <span><b>02</b> Preciso</span>
+            <span><b>03</b> Humano</span>
+          </div>
+        </div>
+        <div className="brand-poster-stage reveal" aria-label="Identidad visual Quiroz">
+          <div className="brand-poster-back"><img src={brandIsotypeSrc} alt="Isotipo dorado de Quiroz" /></div>
+          <div className="brand-poster-card">
+            <img src={brandPosterSrc} alt="Identidad de Quiroz, diseño web para hostelería" />
+            <div className="brand-poster-shine" />
+          </div>
+          <div className="brand-poster-caption"><span>QUIROZ / NAVARRA</span><span>BRAND SYSTEM 01</span></div>
         </div>
       </section>
 
@@ -299,11 +367,11 @@ export function QuirozHero() {
       </section>
 
       <section className="about-section section-pad">
-        <div className="about-photo reveal"><img src={PHOTO_SRC} alt="Bryan Quiroz trabajando" /><span>Diseñando desde Pamplona</span></div>
+        <div className="about-photo reveal"><img src={PHOTO_SRC} alt="Bryans Quiroz trabajando" /><span>Diseñando desde Pamplona</span></div>
         <div className="about-copy reveal">
           <p className="eyebrow"><span /> Sobre mí</p>
           <h2>Tu proyecto no pasa por cinco departamentos. <em>Hablamos tú y yo.</em></h2>
-          <p>Soy Bryan Quiroz. Combino estrategia, diseño y desarrollo para crear webs con personalidad y objetivos claros. Me implico en cada proyecto como si el negocio también fuera mío.</p>
+          <p>Soy Bryans Quiroz. Combino estrategia, diseño y desarrollo para crear webs con personalidad y objetivos claros. Me implico en cada proyecto como si el negocio también fuera mío.</p>
           <div className="about-points">
             <span><Check size={16} /> Comunicación directa</span>
             <span><Check size={16} /> Diseño sin plantillas</span>
@@ -313,7 +381,7 @@ export function QuirozHero() {
       </section>
 
       <section id="contacto" className="contact-section">
-        <div className="contact-orbit" aria-hidden="true"><span>Q</span></div>
+        <div className="contact-orbit" aria-hidden="true"><img src={brandIsotypeSrc} alt="" /></div>
         <p className="eyebrow light"><span /> Tu próximo paso</p>
         <h2>¿Creamos algo<br /><em>difícil de ignorar?</em></h2>
         <p className="contact-copy">Cuéntame qué tienes en mente. Te responderé con una primera dirección clara para convertirlo en una web que venda tu verdadero valor.</p>
@@ -322,7 +390,7 @@ export function QuirozHero() {
       </section>
 
       <footer>
-        <img src={LOGO_SRC} alt="Quiroz" />
+        <img src={brandSignatureSrc} alt="Quiroz Digital Studio" />
         <p>Diseño web con estrategia, carácter y detalle.</p>
         <div><span>© 2026 Quiroz</span><a href="#inicio">Volver arriba ↑</a></div>
       </footer>
