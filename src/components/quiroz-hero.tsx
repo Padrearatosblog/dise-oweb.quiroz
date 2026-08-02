@@ -202,6 +202,7 @@ export function QuirozHero() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    document.title = 'Diseño web en Pamplona para hostelería | Quiroz'
     const reveal = new IntersectionObserver(
       (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
       { threshold: 0.12 },
@@ -221,6 +222,7 @@ export function QuirozHero() {
         </a>
 
         <nav className="desktop-nav" aria-label="Navegación principal">
+          <a href="#/experiencia">Experiencia 3D</a>
           <a href="#proyectos">Proyectos</a>
           <a href="#servicios">Servicios</a>
           <a href="#proceso">Proceso</a>
@@ -233,6 +235,7 @@ export function QuirozHero() {
 
         {menuOpen && (
           <nav className="mobile-nav" aria-label="Navegación móvil">
+            <a href="#/experiencia" onClick={closeMenu}>Experiencia 3D</a>
             <a href="#proyectos" onClick={closeMenu}>Proyectos</a>
             <a href="#servicios" onClick={closeMenu}>Servicios</a>
             <a href="#proceso" onClick={closeMenu}>Proceso</a>
