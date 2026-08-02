@@ -172,8 +172,9 @@ function ProjectVisual({ type }: { type: string }) {
         <div className="studio-mark-glint" />
       </div>
       <div className="studio-wordmark" aria-hidden="true">
+        <div className="studio-letter-flare" />
         <div className="studio-quiroz-letters">
-          {'QUIROZ'.split('').map((letter, index) => <span key={letter + index} style={{ '--letter': index } as React.CSSProperties}>{letter}</span>)}
+          {'QUIROZ'.split('').map((letter, index) => <span data-letter={letter} key={letter + index} style={{ '--letter': index } as React.CSSProperties}>{letter}</span>)}
         </div>
         <div className="studio-subtitle">Digital Studio</div>
         <p>Webs con esencia para negocios reales</p>
@@ -277,7 +278,14 @@ export function QuirozHero() {
   useEffect(() => {
     document.title = 'Diseño web en Pamplona para hostelería | Quiroz'
     const reveal = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
+      (entries) => entries.forEach((entry) => {
+        const isAnimatedIdentity = entry.target.querySelector('.studio-logo-reveal')
+        if (isAnimatedIdentity) {
+          entry.target.classList.toggle('is-visible', entry.isIntersecting)
+          return
+        }
+        if (entry.isIntersecting) entry.target.classList.add('is-visible')
+      }),
       { threshold: 0.12 },
     )
     document.querySelectorAll('.reveal').forEach((element) => reveal.observe(element))
