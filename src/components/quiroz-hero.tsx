@@ -219,6 +219,10 @@ function BrandIntro() {
     <div className={`brand-intro${exiting ? ' is-exiting' : ''}`} role="dialog" aria-modal="true" aria-label="Presentación de Quiroz Digital Studio">
       <div className="brand-intro-stage project-card is-visible">
         <ProjectVisual type="studio" />
+        <div className="brand-intro-signature" aria-label="Firma de Bryans Astorga">
+          <span>Bryans Astorga</span>
+          <small>Diseñador web · Pamplona</small>
+        </div>
       </div>
       <button type="button" className="brand-intro-skip" onClick={skipIntro}>
         Saltar introducción <X size={14} />
