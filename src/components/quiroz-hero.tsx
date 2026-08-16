@@ -15,8 +15,10 @@ import {
   Layout,
   Menu,
   MessageCircle,
+  Moon,
   MousePointer2,
   QrCode,
+  Sun,
   X,
 } from 'lucide-react'
 
@@ -274,6 +276,14 @@ function Interactive3DShowcase() {
 
 export function QuirozHero() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => localStorage.getItem('quiroz-theme') === 'light' ? 'light' : 'dark')
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
+    localStorage.setItem('quiroz-theme', theme)
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#15100c' : '#f4ecdf')
+  }, [theme])
 
   useEffect(() => {
     document.title = 'Diseño web en Pamplona para hostelería | Quiroz'
@@ -309,10 +319,23 @@ export function QuirozHero() {
           <a href="#proceso">Proceso</a>
         </nav>
 
-        <a href="#contacto" className="nav-cta">Hablemos <ArrowUpRight size={15} /></a>
-        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú" aria-expanded={menuOpen}>
-          {menuOpen ? <X /> : <Menu />}
-        </button>
+        <div className="header-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={`Activar modo ${theme === 'dark' ? 'claro' : 'oscuro'}`}
+            title={`Modo ${theme === 'dark' ? 'claro' : 'oscuro'}`}
+          >
+            <Sun size={14} aria-hidden="true" />
+            <span className="theme-toggle-track"><i /></span>
+            <Moon size={14} aria-hidden="true" />
+          </button>
+          <a href="#contacto" className="nav-cta">Hablemos <ArrowUpRight size={15} /></a>
+          <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menú" aria-expanded={menuOpen}>
+            {menuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
 
         {menuOpen && (
           <nav className="mobile-nav" aria-label="Navegación móvil">
