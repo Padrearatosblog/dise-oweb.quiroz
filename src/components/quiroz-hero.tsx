@@ -186,6 +186,47 @@ function ProjectVisual({ type }: { type: string }) {
   )
 }
 
+function BrandIntro() {
+  const [visible, setVisible] = useState(true)
+  const [exiting, setExiting] = useState(false)
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 350 : 5100)
+    const closeTimer = window.setTimeout(() => setVisible(false), reducedMotion ? 750 : 5900)
+
+    return () => {
+      window.clearTimeout(exitTimer)
+      window.clearTimeout(closeTimer)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!visible) document.body.style.overflow = ''
+  }, [visible])
+
+  if (!visible) return null
+
+  const skipIntro = () => {
+    setExiting(true)
+    window.setTimeout(() => setVisible(false), 450)
+  }
+
+  return (
+    <div className={`brand-intro${exiting ? ' is-exiting' : ''}`} role="dialog" aria-modal="true" aria-label="Presentación de Quiroz Digital Studio">
+      <div className="brand-intro-stage project-card is-visible">
+        <ProjectVisual type="studio" />
+      </div>
+      <button type="button" className="brand-intro-skip" onClick={skipIntro}>
+        Saltar introducción <X size={14} />
+      </button>
+    </div>
+  )
+}
+
 function Interactive3DShowcase() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const sceneRef = useRef<HTMLDivElement>(null)
@@ -306,6 +347,7 @@ export function QuirozHero() {
 
   return (
     <main className="site-shell">
+      <BrandIntro />
       <header className="topbar">
         <a href="#inicio" className="brand" aria-label="Quiroz, inicio">
           <img src={brandIsotypeSrc} alt="" />
