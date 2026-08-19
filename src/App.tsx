@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { QuirozExperience } from '@/components/quiroz-experience'
-import { QuirozHero } from '@/components/quiroz-hero'
+import { QuirozHome } from '@/components/quiroz-home'
 
 function App() {
   const [route, setRoute] = useState(window.location.hash)
@@ -11,7 +11,7 @@ function App() {
     return () => window.removeEventListener('hashchange', updateRoute)
   }, [])
 
-  return route.startsWith('#/experiencia') ? <QuirozExperience /> : <QuirozHero />
+  return route.startsWith('#/experiencia') ? <QuirozExperience /> : <QuirozHome />
 }
 
 export default App
