@@ -493,7 +493,7 @@ function PortfolioNarrative() {
     { key: 'maitagarri', number: '03', name: 'Maitagarri · San Fermín', kind: 'Campaña · Hostelería · Carta', statement: 'Una identidad preparada para el momento más intenso del año.', image: PORTFOLIO_ASSETS.maitagarri, width: 1023, height: 1537, alt: 'Fachada del Asador Maitagarri en Pamplona', href: 'https://github.com/Padrearatosblog/maitagarri.sanfermin' },
     { key: 'north', number: '04', name: 'North Division', kind: 'Concept / Demo · Dirección creativa', statement: 'La ingeniería explicada como una construcción cinematográfica.', image: PORTFOLIO_ASSETS.north, width: 1500, height: 844, alt: 'Estructura industrial del concepto North Division', href: 'https://github.com/Padrearatosblog/north.division' },
     { key: 'birth', number: '05', name: 'Nacimientos Quiroz', kind: 'Experiencia personal · Memoria', statement: 'Tecnología que baja la voz para dejar hablar a los recuerdos.', image: PORTFOLIO_ASSETS.nacimientos, width: 1500, height: 844, alt: 'Fotografía de recién nacida del proyecto Nacimientos Quiroz', href: 'https://github.com/Padrearatosblog/nacimientos.quiroz' },
-    { key: 'blog', number: '06', name: 'Mi camino y el de mi hija', kind: 'Blog · Narrativa editorial', statement: 'Diseñar un lugar donde leer también significa acompañar.', image: PORTFOLIO_ASSETS.blog, width: 600, height: 395, alt: 'Padre caminando con su hija al atardecer', href: 'https://github.com/Padrearatosblog/mibloghistoria' },
+    { key: 'blog', number: '06', name: 'Raíces', kind: 'Memoria · Escritura privada', statement: 'Un espacio íntimo para escribir, guardar recuerdos y compartirlos solo con quien elijas.', image: PORTFOLIO_ASSETS.blog, width: 1400, height: 933, alt: 'Manos sosteniendo una fotografía familiar sobre un cuaderno en el proyecto Raíces', href: 'https://github.com/Padrearatosblog/raices-quiroz' },
   ]
   return (
     <section id="proyectos" className="portfolio-narrative">
@@ -504,7 +504,7 @@ function PortfolioNarrative() {
           <div className="portfolio-scene-copy"><span>{project.number} / {project.kind}</span><h3>{project.name}</h3><p>{project.statement}</p><a href={project.href} target="_blank" rel="noreferrer">Explorar proyecto <ArrowUpRight size={15} /></a></div>
           {project.key === 'north' && <div className="north-blueprint" aria-hidden="true"><i /><i /><span>CONCEPT / DEMO</span></div>}
           {project.key === 'birth' && <div className="birth-note" aria-hidden="true">Cada momento,<br />guardado con cuidado.</div>}
-          {project.key === 'blog' && <div className="blog-lines" aria-hidden="true"><span>Capítulo 01</span><i /><i /><i /></div>}
+          {project.key === 'blog' && <div className="blog-lines" aria-hidden="true"><span>Un recuerdo</span><i /><i /><i /></div>}
         </article>
       ))}
     </section>
