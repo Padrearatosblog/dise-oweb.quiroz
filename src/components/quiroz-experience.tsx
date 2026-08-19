@@ -19,6 +19,7 @@ export function QuirozExperience() {
 
   useEffect(() => {
     document.title = 'Experiencia 3D | Quiroz Digital Studio'
+    const previousScrollRestoration = window.history.scrollRestoration
     window.history.scrollRestoration = 'manual'
     window.scrollTo({ top: 0, behavior: 'auto' })
     const resetScroll = window.setTimeout(() => window.scrollTo({ top: 0, behavior: 'auto' }), 80)
@@ -32,7 +33,11 @@ export function QuirozExperience() {
     }
     update()
     window.addEventListener('scroll', update, { passive: true })
-    return () => { window.clearTimeout(resetScroll); window.removeEventListener('scroll', update) }
+    return () => {
+      window.clearTimeout(resetScroll)
+      window.removeEventListener('scroll', update)
+      window.history.scrollRestoration = previousScrollRestoration
+    }
   }, [])
 
   useEffect(() => {

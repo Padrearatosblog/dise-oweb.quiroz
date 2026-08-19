@@ -29,6 +29,39 @@ const PORTFOLIO_ASSETS = {
   blog: `${BASE_URL}portfolio/blog.webp`,
 }
 
+function observeScrollSection(section: HTMLElement, update: () => void) {
+  let frame = 0
+  let listening = false
+  const requestUpdate = () => {
+    if (!frame) frame = window.requestAnimationFrame(() => {
+      frame = 0
+      update()
+    })
+  }
+  const start = () => {
+    if (listening) return
+    listening = true
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+    requestUpdate()
+  }
+  const stop = () => {
+    if (!listening) return
+    listening = false
+    window.removeEventListener('scroll', requestUpdate)
+    window.removeEventListener('resize', requestUpdate)
+    window.cancelAnimationFrame(frame)
+    frame = 0
+  }
+  const observer = new IntersectionObserver(([entry]) => entry.isIntersecting ? start() : stop(), { rootMargin: '100% 0px' })
+  update()
+  observer.observe(section)
+  return () => {
+    observer.disconnect()
+    stop()
+  }
+}
+
 const qrShowcase = [
   { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco', width: 1122, height: 1402 },
   { src: qrQuirozSrc, name: 'Quiroz Restobar', alt: 'Diseño de menú QR para Quiroz Restobar en Navarra', width: 1024, height: 1536 },
@@ -97,9 +130,7 @@ function ProjectVisual({ type }: { type: string }) {
     )
   }
 
-  if (type === 'menu') {
-    return <QrCarousel />
-  }
+  if (type === 'menu') return <QrCarousel />
 
   return (
     <div className="project-scene studio-logo-reveal" aria-label="Animación de la identidad Quiroz Digital Studio">
@@ -299,11 +330,9 @@ function WireframeBuildExperience() {
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    let frame = 0
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const update = () => {
-      frame = 0
       const bounds = section.getBoundingClientRect()
       const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
       const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
@@ -311,18 +340,7 @@ function WireframeBuildExperience() {
       section.style.setProperty('--build', progress.toFixed(4))
       section.dataset.stage = stage
     }
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update)
-    }
-
-    update()
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', requestUpdate)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', requestUpdate)
-      window.removeEventListener('resize', requestUpdate)
-    }
+    return observeScrollSection(section, update)
   }, [])
 
   return (
@@ -367,10 +385,8 @@ function ResponsiveMorphExperience() {
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    let frame = 0
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const update = () => {
-      frame = 0
       const bounds = section.getBoundingClientRect()
       const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
       const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
@@ -381,11 +397,7 @@ function ResponsiveMorphExperience() {
       section.style.setProperty('--device-width', `${width.toFixed(2)}%`)
       section.dataset.device = progress < .32 ? 'desktop' : progress < .7 ? 'tablet' : 'movil'
     }
-    const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update) }
-    update()
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', requestUpdate)
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', requestUpdate); window.removeEventListener('resize', requestUpdate) }
+    return observeScrollSection(section, update)
   }, [])
 
   return (
@@ -414,19 +426,15 @@ function QrMenuExperience() {
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    let frame = 0
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const update = () => {
-      frame = 0
       const bounds = section.getBoundingClientRect()
       const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
       const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
       section.style.setProperty('--scan', progress.toFixed(4))
       section.dataset.scan = progress < .3 ? 'qr' : progress < .62 ? 'conexion' : 'carta'
     }
-    const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update) }
-    update(); window.addEventListener('scroll', requestUpdate, { passive: true }); window.addEventListener('resize', requestUpdate)
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', requestUpdate); window.removeEventListener('resize', requestUpdate) }
+    return observeScrollSection(section, update)
   }, [])
 
   return (
