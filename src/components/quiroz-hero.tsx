@@ -379,6 +379,43 @@ function WireframeBuildExperience() {
   )
 }
 
+function QuirozCinematicStatement() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const update = () => {
+      const bounds = section.getBoundingClientRect()
+      const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
+      section.style.setProperty('--cinema', progress.toFixed(4))
+      section.dataset.phase = progress < .34 ? 'materia' : progress < .72 ? 'forma' : 'presencia'
+    }
+    return observeScrollSection(section, update)
+  }, [])
+
+  return (
+    <section className="quiroz-cinema" ref={sectionRef} data-phase="materia" aria-labelledby="cinema-title">
+      <div className="quiroz-cinema-sticky">
+        <figure className="cinema-material" aria-hidden="true">
+          <img src={brandPosterSrc} alt="" width="1122" height="1402" loading="lazy" decoding="async" />
+        </figure>
+        <div className="cinema-depth" aria-hidden="true"><i /><i /><i /><i /></div>
+        <div className="cinema-frame" aria-hidden="true"><span>QUIROZ / DIGITAL CRAFT</span><span>PAMPLONA · 42.8125° N</span><i /><i /><i /><i /></div>
+        <div className="cinema-copy">
+          <p className="eyebrow light"><span /> Diseño que ocupa su lugar</p>
+          <h2 id="cinema-title"><span>No hago webs.</span><strong>Construyo</strong><em>presencia.</em></h2>
+          <p>Una marca debe sentirse antes de explicarse. Estrategia, imagen y tecnología avanzan juntas hasta convertir atención en deseo.</p>
+          <a href="#proyectos">Verlo en mis proyectos <ArrowUpRight size={15} /></a>
+        </div>
+        <div className="cinema-phases" aria-hidden="true"><span>01 Materia</span><span>02 Forma</span><span>03 Presencia</span><i /></div>
+      </div>
+    </section>
+  )
+}
+
 function ResponsiveMorphExperience() {
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -622,6 +659,7 @@ export function QuirozHero() {
         </div>
       </section>
 
+      <QuirozCinematicStatement />
       <WireframeBuildExperience />
       <ResponsiveMorphExperience />
       <QrMenuExperience />
