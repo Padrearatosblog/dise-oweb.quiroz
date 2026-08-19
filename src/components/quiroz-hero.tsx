@@ -10,13 +10,9 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Code2,
-  Layout,
   Menu,
   MessageCircle,
   Moon,
-  MousePointer2,
-  QrCode,
   Sun,
   X,
 } from 'lucide-react'
@@ -25,73 +21,13 @@ const BASE_URL = import.meta.env.BASE_URL
 const brandIsotypeSrc = `${BASE_URL}isotipo-quiroz.jpg`
 const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
 const CASA_PACO_HERO = `${BASE_URL}casa-paco-fachada.webp`
-
-const projects = [
-  {
-    number: '01',
-    href: 'proyectos/asador-maitagarri/',
-    eyebrow: 'Hostelería · Identidad & Web',
-    title: 'Una web que se siente como entrar por la puerta.',
-    description:
-      'El ambiente, la carta y la forma de recibir al cliente llevados a una experiencia digital sencilla, cálida y fácil de recordar.',
-    color: '#9c4f37',
-    visual: 'restaurant',
-  },
-  {
-    number: '02',
-    href: 'proyectos/menus-qr/',
-    eyebrow: 'Hostelería · Menús digitales QR',
-    title: 'Menús QR pensados para cada negocio y cada cliente.',
-    description:
-      'No se trata de colocar un código en una mesa. Diseño una pieza que forma parte del local y permite consultar la carta en varios idiomas sin complicaciones.',
-    color: '#c8a66c',
-    visual: 'menu',
-  },
-  {
-    number: '03',
-    href: 'sobre-mi/',
-    eyebrow: 'Estudio · Identidad digital',
-    title: 'Una identidad clara, cuidada y fácil de reconocer.',
-    description:
-      'Una imagen coherente en la web, los menús y cada punto de contacto para que el negocio transmita confianza desde el primer vistazo.',
-    color: '#62664d',
-    visual: 'studio',
-  },
-]
-
-const services = [
-  {
-    icon: Layout,
-    href: 'servicios/diseno-web-restaurantes/',
-    title: 'Diseño web estratégico',
-    description: 'Páginas web a medida para hostelería y negocios locales: dirección visual, arquitectura y mensajes que generan confianza.',
-  },
-  {
-    icon: Code2,
-    href: 'servicios/',
-    title: 'Desarrollo a medida',
-    description: 'Una web rápida, responsive y cuidada hasta el último detalle. Sin sensación de plantilla genérica.',
-  },
-  {
-    icon: QrCode,
-    href: 'servicios/menus-digitales-qr/',
-    title: 'Cartas y experiencias QR',
-    description: 'Menús digitales atractivos, fáciles de actualizar y preparados para clientes internacionales.',
-  },
-  {
-    icon: MousePointer2,
-    href: 'servicios/seo-local/',
-    title: 'SEO local y conversión',
-    description: 'Contenido y estructura para mejorar tu visibilidad en Pamplona y Navarra y convertir visitas en contactos, reservas o ventas.',
-  },
-]
-
-const process = [
-  ['01', 'Descubrir', 'Entiendo el negocio, la competencia y qué debe sentir el cliente al llegar.'],
-  ['02', 'Dirigir', 'Defino una dirección visual y verbal propia, coherente con tu valor real.'],
-  ['03', 'Construir', 'Diseño y desarrollo cada sección con prioridad absoluta para móvil.'],
-  ['04', 'Lanzar', 'Reviso, optimizo y dejo una base preparada para crecer contigo.'],
-]
+const PORTFOLIO_ASSETS = {
+  karla: `${BASE_URL}portfolio/karla.webp`,
+  maitagarri: `${BASE_URL}portfolio/maitagarri.webp`,
+  north: `${BASE_URL}portfolio/north.webp`,
+  nacimientos: `${BASE_URL}portfolio/nacimientos.webp`,
+  blog: `${BASE_URL}portfolio/blog.webp`,
+}
 
 const qrShowcase = [
   { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco', width: 1122, height: 1402 },
@@ -425,6 +361,156 @@ function WireframeBuildExperience() {
   )
 }
 
+function ResponsiveMorphExperience() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    let frame = 0
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const update = () => {
+      frame = 0
+      const bounds = section.getBoundingClientRect()
+      const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
+      const first = Math.min(progress / .48, 1)
+      const second = Math.max(0, (progress - .48) / .52)
+      const width = 100 - first * 34 - second * 34
+      section.style.setProperty('--morph', progress.toFixed(4))
+      section.style.setProperty('--device-width', `${width.toFixed(2)}%`)
+      section.dataset.device = progress < .32 ? 'desktop' : progress < .7 ? 'tablet' : 'movil'
+    }
+    const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', requestUpdate); window.removeEventListener('resize', requestUpdate) }
+  }, [])
+
+  return (
+    <section className="responsive-story" ref={sectionRef} data-device="desktop" aria-labelledby="responsive-title">
+      <div className="responsive-sticky">
+        <div className="responsive-heading">
+          <p className="eyebrow light"><span /> Una interfaz. Cualquier pantalla.</p>
+          <h2 id="responsive-title">El diseño no se reduce.<br /><em>Responde.</em></h2>
+        </div>
+        <div className="responsive-device" aria-label="La misma web de Casa Paco adaptándose de escritorio a móvil">
+          <div className="responsive-chrome"><i /><i /><i /><span>Casa Paco</span><b /></div>
+          <div className="responsive-site">
+            <header><b>CASA PACO</b><nav>Restaurante&nbsp;&nbsp;&nbsp; Carta&nbsp;&nbsp;&nbsp; Reservas</nav><i>☰</i></header>
+            <div><figure><img src={CASA_PACO_HERO} alt="Fachada de Casa Paco" width="1024" height="1536" loading="lazy" decoding="async" /></figure><article><small>PAMPLONA · COCINA NAVARRA</small><h3>La mesa<br />de siempre.</h3><p>Producto de temporada y una forma directa de reservar.</p><span>Ver carta</span></article></div>
+          </div>
+        </div>
+        <div className="responsive-readout" aria-hidden="true"><span className="device-desktop">DESKTOP · 1440</span><span className="device-tablet">TABLET · 768</span><span className="device-mobile">MOBILE · 390</span><i /></div>
+      </div>
+    </section>
+  )
+}
+
+function QrMenuExperience() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    let frame = 0
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const update = () => {
+      frame = 0
+      const bounds = section.getBoundingClientRect()
+      const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
+      section.style.setProperty('--scan', progress.toFixed(4))
+      section.dataset.scan = progress < .3 ? 'qr' : progress < .62 ? 'conexion' : 'carta'
+    }
+    const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update) }
+    update(); window.addEventListener('scroll', requestUpdate, { passive: true }); window.addEventListener('resize', requestUpdate)
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', requestUpdate); window.removeEventListener('resize', requestUpdate) }
+  }, [])
+
+  return (
+    <section className="qr-story" ref={sectionRef} data-scan="qr" aria-labelledby="qr-story-title">
+      <div className="qr-story-sticky">
+        <div className="qr-story-copy">
+          <p className="eyebrow"><span /> Carta digital · Proyecto real</p>
+          <h2 id="qr-story-title">De la mesa<br /><em>a la carta.</em></h2>
+          <p>Un QR diseñado para el local abre una experiencia clara, actualizable y preparada para cada cliente.</p>
+          <a href={`${BASE_URL}servicios/menus-digitales-qr/`}>Ver servicio <ArrowUpRight size={14} /></a>
+        </div>
+        <div className="qr-story-scene">
+          <figure className="qr-source"><img src={qrCasaPacoSrc} alt="Diseño QR multilingüe de Casa Paco" width="1122" height="1402" loading="lazy" decoding="async" /></figure>
+          <div className="qr-signal" aria-hidden="true"><i /><i /><i /></div>
+          <div className="menu-phone">
+            <div className="phone-speaker" />
+            <div className="menu-app">
+              <header><b>CASA PACO</b><button type="button" tabIndex={-1}>ES⌄</button></header>
+              <div className="menu-cover"><img src={CASA_PACO_HERO} alt="" width="1024" height="1536" loading="lazy" decoding="async" /><span>Cocina navarra<br /><b>en el centro de Pamplona</b></span></div>
+              <nav aria-label="Categorías de ejemplo de la carta"><span className="active">Menús</span><span>Carta</span><span>Postres</span></nav>
+              <article><small>ENTRE SEMANA</small><h3>Menú del día <b>22 €</b></h3><p>Consulta los platos disponibles y la información del menú.</p><div><span>🌿 Opciones</span><span>ⓘ Alérgenos</span></div></article>
+              <article><small>SÁBADOS Y DOMINGOS</small><h3>Fin de semana <b>37 €</b></h3></article>
+            </div>
+          </div>
+        </div>
+        <div className="qr-story-status" aria-hidden="true"><span>01 QR</span><span>02 Conexión</span><span>03 Carta real</span></div>
+      </div>
+    </section>
+  )
+}
+
+function ServiceDemonstrations() {
+  const demonstrations = [
+    { number: '01', title: 'Diseño web estratégico', text: 'Jerarquía, dirección visual y contenido trabajando para que el negocio se entienda y se recuerde.', href: 'servicios/diseno-web-restaurantes/', visual: 'design' },
+    { number: '02', title: 'Desarrollo a medida', text: 'Código responsive, accesible y preparado para crecer sin convertir la experiencia en una plantilla.', href: 'servicios/', visual: 'code' },
+    { number: '03', title: 'Cartas digitales QR', text: 'Una carta fácil de consultar, actualizar y adaptar a idiomas, categorías y necesidades reales.', href: 'servicios/menus-digitales-qr/', visual: 'menu' },
+    { number: '04', title: 'SEO local y conversión', text: 'Arquitectura y contenido para que te encuentren en Pamplona y sepan cuál es el siguiente paso.', href: 'servicios/seo-local/', visual: 'local' },
+  ]
+  return (
+    <section id="servicios" className="service-stories">
+      <header className="service-stories-heading">
+        <p className="eyebrow light"><span /> Lo que construyo</p>
+        <h2>Cuatro capacidades.<br /><em>Un solo resultado.</em></h2>
+      </header>
+      {demonstrations.map((service) => (
+        <article className={`service-story service-${service.visual}`} key={service.number}>
+          <div className="service-story-copy"><span>{service.number}</span><h3>{service.title}</h3><p>{service.text}</p><a href={`${BASE_URL}${service.href}`}>Conocer el servicio <ArrowUpRight size={14} /></a></div>
+          <div className="service-demo" aria-hidden="true">
+            {service.visual === 'design' && <><div className="demo-grid">{Array.from({ length: 6 }, (_, index) => <i key={index} />)}</div><div className="demo-type"><b>Tu negocio</b><span>bien contado.</span></div></>}
+            {service.visual === 'code' && <div className="demo-code"><span>&lt;main&gt;</span><b>&nbsp;&nbsp;&lt;h1&gt;Tu propuesta&lt;/h1&gt;</b><i>&nbsp;&nbsp;&lt;section aria-label=&quot;Servicios&quot;&gt;</i><em>&nbsp;&nbsp;&nbsp;&nbsp;experiencia + rendimiento</em><i>&nbsp;&nbsp;&lt;/section&gt;</i><span>&lt;/main&gt;</span></div>}
+            {service.visual === 'menu' && <div className="demo-menu"><header><b>CARTA</b><span>ES&nbsp; EN&nbsp; FR</span></header><p>Entrantes <b>→</b></p><p>Carnes <b>→</b></p><p>Postres <b>→</b></p><small>Información clara · Siempre actualizable</small></div>}
+            {service.visual === 'local' && <div className="demo-local"><span>⌖ PAMPLONA</span><div><small>DISEÑO WEB PARA HOSTELERÍA</small><b>QUIROZ</b><p>Servicio · Proyectos · Contacto</p></div><i>Arquitectura local</i><i>Contenido útil</i><i>Conversión clara</i></div>}
+          </div>
+        </article>
+      ))}
+    </section>
+  )
+}
+
+function PortfolioNarrative() {
+  const portfolio = [
+    { key: 'casa', number: '01', name: 'Casa Paco', kind: 'Hostelería · Web y carta digital', statement: 'Convertir una visita en ganas de sentarse a la mesa.', image: CASA_PACO_HERO, width: 1024, height: 1536, alt: 'Fachada del restaurante Casa Paco', href: 'https://github.com/Padrearatosblog/casapaco-demo' },
+    { key: 'karla', number: '02', name: 'Karla Castañeda', kind: 'Bienestar · Presencia local', statement: 'Una experiencia serena para un servicio basado en confianza.', image: PORTFOLIO_ASSETS.karla, width: 810, height: 1080, alt: 'Retrato profesional de Karla Castañeda', href: 'https://github.com/Padrearatosblog/karla.casta-eda' },
+    { key: 'maitagarri', number: '03', name: 'Maitagarri · San Fermín', kind: 'Campaña · Hostelería · Carta', statement: 'Una identidad preparada para el momento más intenso del año.', image: PORTFOLIO_ASSETS.maitagarri, width: 1023, height: 1537, alt: 'Fachada del Asador Maitagarri en Pamplona', href: 'https://github.com/Padrearatosblog/maitagarri.sanfermin' },
+    { key: 'north', number: '04', name: 'North Division', kind: 'Concept / Demo · Dirección creativa', statement: 'La ingeniería explicada como una construcción cinematográfica.', image: PORTFOLIO_ASSETS.north, width: 1500, height: 844, alt: 'Estructura industrial del concepto North Division', href: 'https://github.com/Padrearatosblog/north.division' },
+    { key: 'birth', number: '05', name: 'Nacimientos Quiroz', kind: 'Experiencia personal · Memoria', statement: 'Tecnología que baja la voz para dejar hablar a los recuerdos.', image: PORTFOLIO_ASSETS.nacimientos, width: 1500, height: 844, alt: 'Fotografía de recién nacida del proyecto Nacimientos Quiroz', href: 'https://github.com/Padrearatosblog/nacimientos.quiroz' },
+    { key: 'blog', number: '06', name: 'Mi camino y el de mi hija', kind: 'Blog · Narrativa editorial', statement: 'Diseñar un lugar donde leer también significa acompañar.', image: PORTFOLIO_ASSETS.blog, width: 600, height: 395, alt: 'Padre caminando con su hija al atardecer', href: 'https://github.com/Padrearatosblog/mibloghistoria' },
+  ]
+  return (
+    <section id="proyectos" className="portfolio-narrative">
+      <header className="portfolio-heading"><p className="eyebrow"><span /> Adaptación, no repetición</p><h2>Seis proyectos.<br /><em>Seis formas de diseñar.</em></h2><p>La dirección cambia porque el negocio, el público y la historia también cambian.</p></header>
+      {portfolio.map((project) => (
+        <article className={`portfolio-scene scene-${project.key}`} key={project.key}>
+          <figure><img src={project.image} alt={project.alt} width={project.width} height={project.height} loading="lazy" decoding="async" /></figure>
+          <div className="portfolio-scene-copy"><span>{project.number} / {project.kind}</span><h3>{project.name}</h3><p>{project.statement}</p><a href={project.href} target="_blank" rel="noreferrer">Explorar proyecto <ArrowUpRight size={15} /></a></div>
+          {project.key === 'north' && <div className="north-blueprint" aria-hidden="true"><i /><i /><span>CONCEPT / DEMO</span></div>}
+          {project.key === 'birth' && <div className="birth-note" aria-hidden="true">Cada momento,<br />guardado con cuidado.</div>}
+          {project.key === 'blog' && <div className="blog-lines" aria-hidden="true"><span>Capítulo 01</span><i /><i /><i /></div>}
+        </article>
+      ))}
+    </section>
+  )
+}
+
 export function QuirozHero() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<'dark' | 'light'>(() => localStorage.getItem('quiroz-theme') === 'light' ? 'light' : 'dark')
@@ -466,8 +552,8 @@ export function QuirozHero() {
 
         <nav className="desktop-nav" aria-label="Navegación principal">
           <a href="#/experiencia">Experiencia 3D</a>
-          <a href={`${BASE_URL}proyectos/`}>Proyectos</a>
-          <a href={`${BASE_URL}servicios/`}>Servicios</a>
+          <a href="#proyectos">Proyectos</a>
+          <a href="#servicios">Servicios</a>
           <a href={`${BASE_URL}sobre-mi/`}>Sobre mí</a>
         </nav>
 
@@ -492,8 +578,8 @@ export function QuirozHero() {
         {menuOpen && (
           <nav className="mobile-nav" aria-label="Navegación móvil">
             <a href="#/experiencia" onClick={closeMenu}>Experiencia 3D</a>
-            <a href={`${BASE_URL}proyectos/`} onClick={closeMenu}>Proyectos</a>
-            <a href={`${BASE_URL}servicios/`} onClick={closeMenu}>Servicios</a>
+            <a href="#proyectos" onClick={closeMenu}>Proyectos</a>
+            <a href="#servicios" onClick={closeMenu}>Servicios</a>
             <a href={`${BASE_URL}sobre-mi/`} onClick={closeMenu}>Sobre mí</a>
             <a href="#contacto" onClick={closeMenu}>Hablemos</a>
           </nav>
@@ -529,88 +615,21 @@ export function QuirozHero() {
       </section>
 
       <WireframeBuildExperience />
+      <ResponsiveMorphExperience />
+      <QrMenuExperience />
+      <ServiceDemonstrations />
+      <PortfolioNarrative />
 
       <section id="identidad" className="brand-world section-pad">
         <div className="brand-world-copy reveal">
           <p className="eyebrow light"><span /> Una identidad con raíz</p>
-          <h2>Elegancia sin distancia.<br /><em>Carácter sin ruido.</em></h2>
-          <p>
-            Quiroz nace del cuidado por los detalles, de la hostelería vivida desde dentro y de una forma muy personal
-            de trabajar: escuchar primero, ordenar después y diseñar solo lo que aporta valor.
-          </p>
-          <div className="brand-values">
-            <span><b>01</b> Cálido</span>
-            <span><b>02</b> Preciso</span>
-            <span><b>03</b> Humano</span>
-          </div>
+          <h2>Distinto para cada cliente.<br /><em>Reconocible como Quiroz.</em></h2>
+          <p>Escucho, ordeno y diseño solo lo que aporta valor. Esa es la parte que no cambia.</p>
+          <div className="brand-values"><span><b>01</b> Cálido</span><span><b>02</b> Preciso</span><span><b>03</b> Humano</span></div>
         </div>
         <div className="brand-poster-stage reveal" aria-label="Identidad visual Quiroz">
-          <div className="brand-poster-card">
-            <img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" width="1122" height="1402" loading="lazy" decoding="async" />
-            <div className="brand-poster-shine" />
-            <div className="brand-poster-focus" aria-hidden="true" />
-          </div>
+          <div className="brand-poster-card"><img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" width="1122" height="1402" loading="lazy" decoding="async" /><div className="brand-poster-shine" /><div className="brand-poster-focus" aria-hidden="true" /></div>
           <div className="brand-poster-caption"><span>QUIROZ / NAVARRA</span><span>BRAND SYSTEM 01</span></div>
-        </div>
-      </section>
-
-      <section id="proyectos" className="projects-section section-pad">
-        <div className="section-heading reveal">
-          <div>
-            <p className="eyebrow"><span /> Trabajo seleccionado</p>
-            <h2>Proyectos con<br /><em>intención.</em></h2>
-          </div>
-            <p>Diseño web para restaurantes, hostelería, servicios y negocios locales de Pamplona que quieren atraer clientes y competir por valor, no por precio.</p>
-        </div>
-
-        <div className="project-list">
-          {projects.map((project) => (
-            <article className="project-card reveal" key={project.number} style={{ '--project-color': project.color } as React.CSSProperties}>
-              <div className="project-visual"><ProjectVisual type={project.visual} /></div>
-              <div className="project-copy">
-                <div className="project-meta"><span>{project.eyebrow}</span><span>{project.number}</span></div>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <a className="project-link" href={`${BASE_URL}${project.href}`} aria-label={`Ver ${project.title}`}>
-                  Ver proyecto <ArrowUpRight size={17} />
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="servicios" className="services-section section-pad">
-        <div className="services-intro reveal">
-          <p className="eyebrow light"><span /> Lo que hago</p>
-          <h2>De una idea a una presencia digital que <em>trabaja por ti.</em></h2>
-        </div>
-        <div className="services-grid">
-          {services.map((service, index) => {
-            const Icon = service.icon
-            return (
-              <article className="service-card reveal" key={service.title}>
-                <div className="service-top"><span>0{index + 1}</span><Icon /></div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <a className="service-link" href={`${BASE_URL}${service.href}`}>Conocer el servicio <ArrowUpRight size={14} /></a>
-              </article>
-            )
-          })}
-        </div>
-      </section>
-
-      <section id="proceso" className="process-section section-pad">
-        <div className="process-heading reveal">
-          <p className="eyebrow"><span /> Cómo trabajaremos</p>
-          <h2>Simple por fuera.<br /><em>Rigurosamente pensado.</em></h2>
-        </div>
-        <div className="process-list">
-          {process.map(([number, title, description]) => (
-            <article className="process-item reveal" key={number}>
-              <span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight />
-            </article>
-          ))}
         </div>
       </section>
 
