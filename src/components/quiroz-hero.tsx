@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import brandPosterSrc from '../../quiroz-sculpture.webp'
-import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
 import qrAmySrc from '../../qr-amy.webp'
 import qrCasaPacoSrc from '../../qr-casa-paco.webp'
 import qrMaitagarriSrc from '../../qr-maitagarri.webp'
@@ -23,11 +22,13 @@ import {
 } from 'lucide-react'
 
 const BASE_URL = import.meta.env.BASE_URL
+const brandIsotypeSrc = `${BASE_URL}isotipo-quiroz.jpg`
 const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
 
 const projects = [
   {
     number: '01',
+    href: 'proyectos/asador-maitagarri/',
     eyebrow: 'Hostelería · Identidad & Web',
     title: 'Una web que se siente como entrar por la puerta.',
     description:
@@ -37,6 +38,7 @@ const projects = [
   },
   {
     number: '02',
+    href: 'proyectos/menus-qr/',
     eyebrow: 'Hostelería · Menús digitales QR',
     title: 'Menús QR pensados para cada negocio y cada cliente.',
     description:
@@ -46,6 +48,7 @@ const projects = [
   },
   {
     number: '03',
+    href: 'sobre-mi/',
     eyebrow: 'Estudio · Identidad digital',
     title: 'Una identidad clara, cuidada y fácil de reconocer.',
     description:
@@ -58,21 +61,25 @@ const projects = [
 const services = [
   {
     icon: Layout,
+    href: 'servicios/diseno-web-restaurantes/',
     title: 'Diseño web estratégico',
     description: 'Páginas web a medida para hostelería y negocios locales: dirección visual, arquitectura y mensajes que generan confianza.',
   },
   {
     icon: Code2,
+    href: 'servicios/',
     title: 'Desarrollo a medida',
     description: 'Una web rápida, responsive y cuidada hasta el último detalle. Sin sensación de plantilla genérica.',
   },
   {
     icon: QrCode,
+    href: 'servicios/menus-digitales-qr/',
     title: 'Cartas y experiencias QR',
     description: 'Menús digitales atractivos, fáciles de actualizar y preparados para clientes internacionales.',
   },
   {
     icon: MousePointer2,
+    href: 'servicios/seo-local/',
     title: 'SEO local y conversión',
     description: 'Contenido y estructura para mejorar tu visibilidad en Pamplona y Navarra y convertir visitas en contactos, reservas o ventas.',
   },
@@ -86,9 +93,9 @@ const process = [
 ]
 
 const qrShowcase = [
-  { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco' },
-  { src: qrQuirozSrc, name: 'Quiroz Restobar', alt: 'Diseño de menú QR para Quiroz Restobar en Navarra' },
-  { src: qrAmySrc, name: 'Amy', alt: 'Diseño QR personalizado para recuerdos de Amy' },
+  { src: qrCasaPacoSrc, name: 'Casa Paco', alt: 'Cartel QR multilingüe para Casa Paco', width: 1122, height: 1402 },
+  { src: qrQuirozSrc, name: 'Quiroz Restobar', alt: 'Diseño de menú QR para Quiroz Restobar en Navarra', width: 1024, height: 1536 },
+  { src: qrAmySrc, name: 'Amy', alt: 'Diseño QR personalizado para recuerdos de Amy', width: 1200, height: 1200 },
 ]
 
 function QrCarousel() {
@@ -126,7 +133,7 @@ function QrCarousel() {
       <div className="qr-carousel-track" ref={trackRef} onScroll={handleScroll}>
         {qrShowcase.map((item, index) => (
           <figure className={`qr-slide ${index === current ? 'active' : ''}`} key={item.name}>
-            <img src={item.src} alt={item.alt} />
+            <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading="lazy" decoding="async" />
             <figcaption><span>0{index + 1}</span>{item.name}</figcaption>
           </figure>
         ))}
@@ -147,7 +154,7 @@ function ProjectVisual({ type }: { type: string }) {
   if (type === 'restaurant') {
     return (
       <div className="project-scene real-work-scene restaurant-work">
-        <img src={qrMaitagarriSrc} alt="Diseño de carta QR para Asador Maitagarri en Pamplona" />
+        <img src={qrMaitagarriSrc} alt="Diseño de carta QR para Asador Maitagarri en Pamplona" width="1054" height="1492" loading="lazy" decoding="async" />
         <div className="real-work-label"><span>Trabajo real</span><b>ASADOR MAITAGARRI / PAMPLONA</b></div>
       </div>
     )
@@ -170,7 +177,7 @@ function ProjectVisual({ type }: { type: string }) {
           <ellipse className="studio-leaf leaf-two" cx="154" cy="133" rx="4" ry="9" transform="rotate(-42 154 133)" />
           <ellipse className="studio-leaf leaf-three" cx="165" cy="123" rx="4" ry="9" transform="rotate(-30 165 123)" />
         </svg>
-        <img className="studio-final-mark" src={brandIsotypeSrc} alt="" />
+        <img className="studio-final-mark" src={brandIsotypeSrc} alt="" width="340" height="265" />
         <div className="studio-mark-glint" />
       </div>
       <div className="studio-wordmark" aria-hidden="true">
@@ -187,22 +194,26 @@ function ProjectVisual({ type }: { type: string }) {
 }
 
 function BrandIntro() {
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(() => sessionStorage.getItem('quiroz-intro-seen') !== 'true')
   const [exiting, setExiting] = useState(false)
 
   useEffect(() => {
+    if (!visible) return
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 350 : 5100)
-    const closeTimer = window.setTimeout(() => setVisible(false), reducedMotion ? 750 : 5900)
+    const closeTimer = window.setTimeout(() => {
+      sessionStorage.setItem('quiroz-intro-seen', 'true')
+      setVisible(false)
+    }, reducedMotion ? 750 : 5900)
 
     return () => {
       window.clearTimeout(exitTimer)
       window.clearTimeout(closeTimer)
       document.body.style.overflow = previousOverflow
     }
-  }, [])
+  }, [visible])
 
   useEffect(() => {
     if (!visible) document.body.style.overflow = ''
@@ -212,6 +223,7 @@ function BrandIntro() {
 
   const skipIntro = () => {
     setExiting(true)
+    sessionStorage.setItem('quiroz-intro-seen', 'true')
     window.setTimeout(() => setVisible(false), 450)
   }
 
@@ -311,7 +323,7 @@ function Interactive3DShowcase() {
       <div className="scene-values" aria-hidden="true"><span className="active">Esencia</span><span>Estrategia</span><span>Diseño</span><span>Precisión</span><span>Impacto</span></div>
       <div className="q-totem" aria-hidden="true">
         <div className="q-aura" /><div className="q-ring ring-one" /><div className="q-ring ring-two" />
-        <div className="q-core"><img src={brandIsotypeSrc} alt="" /></div><div className="q-shadow" />
+        <div className="q-core"><img src={brandIsotypeSrc} alt="" width="340" height="265" /></div><div className="q-shadow" />
       </div>
       <div className="scene-coordinate coordinate-left">QUIROZ / NAVARRA<br />42.8125° N</div>
       <div className="scene-coordinate coordinate-right">DIGITAL CRAFT<br />EST. 2026</div>
@@ -331,7 +343,7 @@ export function QuirozHero() {
   }, [theme])
 
   useEffect(() => {
-    document.title = 'Diseño web en Pamplona para hostelería | Quiroz'
+    document.title = 'Diseño web en Pamplona para negocios locales | Quiroz'
     const reveal = new IntersectionObserver(
       (entries) => entries.forEach((entry) => {
         const shouldReplay = entry.target.matches('.brand-poster-stage') || entry.target.querySelector('.studio-logo-reveal')
@@ -354,15 +366,15 @@ export function QuirozHero() {
       <BrandIntro />
       <header className="topbar">
         <a href="#inicio" className="brand" aria-label="Quiroz, inicio">
-          <img src={brandIsotypeSrc} alt="" />
+          <img src={brandIsotypeSrc} alt="" width="340" height="265" />
           <span><b>QUIROZ</b><small>Digital studio</small></span>
         </a>
 
         <nav className="desktop-nav" aria-label="Navegación principal">
           <a href="#/experiencia">Experiencia 3D</a>
-          <a href="#proyectos">Proyectos</a>
-          <a href="#servicios">Servicios</a>
-          <a href="#proceso">Proceso</a>
+          <a href={`${BASE_URL}proyectos/`}>Proyectos</a>
+          <a href={`${BASE_URL}servicios/`}>Servicios</a>
+          <a href={`${BASE_URL}sobre-mi/`}>Sobre mí</a>
         </nav>
 
         <div className="header-actions">
@@ -386,9 +398,9 @@ export function QuirozHero() {
         {menuOpen && (
           <nav className="mobile-nav" aria-label="Navegación móvil">
             <a href="#/experiencia" onClick={closeMenu}>Experiencia 3D</a>
-            <a href="#proyectos" onClick={closeMenu}>Proyectos</a>
-            <a href="#servicios" onClick={closeMenu}>Servicios</a>
-            <a href="#proceso" onClick={closeMenu}>Proceso</a>
+            <a href={`${BASE_URL}proyectos/`} onClick={closeMenu}>Proyectos</a>
+            <a href={`${BASE_URL}servicios/`} onClick={closeMenu}>Servicios</a>
+            <a href={`${BASE_URL}sobre-mi/`} onClick={closeMenu}>Sobre mí</a>
             <a href="#contacto" onClick={closeMenu}>Hablemos</a>
           </nav>
         )}
@@ -398,8 +410,8 @@ export function QuirozHero() {
         <Interactive3DShowcase />
         <div className="hero-glow" />
         <div className="hero-copy reveal is-visible">
-          <p className="eyebrow"><span /> Diseño web en Pamplona · Bryans Quiroz</p>
-          <h1>Tu negocio merece<br />una presencia<br /><em>imposible de ignorar.</em></h1>
+          <p className="eyebrow"><span /> Diseño web en Pamplona · Bryans Astorga</p>
+          <h1>Diseño web en Pamplona<br />para negocios con una<br /><em>presencia imposible de ignorar.</em></h1>
           <div className="hero-bottom">
             <p>Creo páginas web a medida para hostelería y negocios locales que elevan tu marca, mejoran tu visibilidad y convierten atención en clientes.</p>
             <a href="#proyectos" className="hero-primary">Explorar proyectos <ArrowUpRight size={17} /></a>
@@ -438,7 +450,7 @@ export function QuirozHero() {
         </div>
         <div className="brand-poster-stage reveal" aria-label="Identidad visual Quiroz">
           <div className="brand-poster-card">
-            <img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" />
+            <img src={brandPosterSrc} alt="Escultura digital en oro y piedra creada para la identidad de Quiroz" width="1122" height="1402" loading="lazy" decoding="async" />
             <div className="brand-poster-shine" />
             <div className="brand-poster-focus" aria-hidden="true" />
           </div>
@@ -463,9 +475,9 @@ export function QuirozHero() {
                 <div className="project-meta"><span>{project.eyebrow}</span><span>{project.number}</span></div>
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
-                <button className="project-link" type="button" aria-label={`${project.title}. Enlace próximamente`}>
-                  Ver proyecto <ArrowUpRight size={17} /> <small>Próximamente</small>
-                </button>
+                <a className="project-link" href={`${BASE_URL}${project.href}`} aria-label={`Ver ${project.title}`}>
+                  Ver proyecto <ArrowUpRight size={17} />
+                </a>
               </div>
             </article>
           ))}
@@ -485,6 +497,7 @@ export function QuirozHero() {
                 <div className="service-top"><span>0{index + 1}</span><Icon /></div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
+                <a className="service-link" href={`${BASE_URL}${service.href}`}>Conocer el servicio <ArrowUpRight size={14} /></a>
               </article>
             )
           })}
@@ -506,11 +519,11 @@ export function QuirozHero() {
       </section>
 
       <section className="about-section section-pad">
-        <div className="about-photo reveal"><img src={PHOTO_SRC} alt="Bryans Quiroz trabajando" /><span>Diseñando desde Pamplona</span></div>
+        <div className="about-photo reveal"><img src={PHOTO_SRC} alt="Bryans Astorga, diseñador web de Quiroz Digital Studio" width="576" height="1280" loading="lazy" decoding="async" /><span>Diseñando desde Pamplona</span></div>
         <div className="about-copy reveal">
           <p className="eyebrow"><span /> Sobre mí</p>
           <h2>Tu proyecto no pasa por cinco departamentos. <em>Hablamos tú y yo.</em></h2>
-          <p>Soy Bryans Quiroz. Combino estrategia, diseño y desarrollo para crear webs con personalidad y objetivos claros. Me implico en cada proyecto como si el negocio también fuera mío.</p>
+          <p>Soy Bryans Astorga. Combino estrategia, diseño y desarrollo para crear webs con personalidad y objetivos claros. Me implico en cada proyecto como si el negocio también fuera mío.</p>
           <div className="about-points">
             <span><Check size={16} /> Comunicación directa</span>
             <span><Check size={16} /> Diseño sin plantillas</span>
@@ -520,7 +533,7 @@ export function QuirozHero() {
       </section>
 
       <section id="contacto" className="contact-section">
-        <div className="contact-orbit" aria-hidden="true"><img src={brandIsotypeSrc} alt="" /></div>
+        <div className="contact-orbit" aria-hidden="true"><img src={brandIsotypeSrc} alt="" width="340" height="265" /></div>
         <p className="eyebrow light"><span /> Tu próximo paso</p>
         <h2>¿Creamos algo<br /><em>difícil de ignorar?</em></h2>
         <p className="contact-copy">Cuéntame qué tienes en mente. Te responderé con una primera dirección clara para convertirlo en una web que venda tu verdadero valor.</p>
@@ -530,7 +543,7 @@ export function QuirozHero() {
 
       <footer>
         <a href="#inicio" className="footer-brand" aria-label="Quiroz Digital Studio, volver al inicio">
-          <img src={brandIsotypeSrc} alt="" />
+          <img src={brandIsotypeSrc} alt="" width="340" height="265" />
           <span><b>QUIROZ</b><small>Digital Studio</small></span>
         </a>
         <p>Diseño web con estrategia, carácter y detalle.</p>

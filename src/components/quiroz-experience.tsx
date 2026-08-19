@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowLeft, ArrowUpRight } from 'lucide-react'
-import brandIsotypeSrc from '../../isotipo-quiroz.jpg'
+const brandIsotypeSrc = `${import.meta.env.BASE_URL}isotipo-quiroz.jpg`
 
 const chapters = [
   { label: 'Esencia', title: 'Todo empieza por entender qué te hace diferente.', text: 'Antes de diseñar, escucho. La personalidad del negocio marca el camino.' },
@@ -96,7 +96,7 @@ export function QuirozExperience() {
         <canvas ref={canvasRef} aria-hidden="true" />
         <div className="experience-vignette" />
         <header className="experience-nav">
-          <a href="./" className="experience-brand"><img src={brandIsotypeSrc} alt="" /><span>QUIROZ<small>Digital Studio</small></span></a>
+          <a href="./" className="experience-brand"><img src={brandIsotypeSrc} alt="" width="340" height="265" /><span>QUIROZ<small>Digital Studio</small></span></a>
           <a href="./" className="experience-back"><ArrowLeft size={15} /> Volver al estudio</a>
         </header>
 
@@ -107,8 +107,8 @@ export function QuirozExperience() {
         <div className="experience-totem" style={{ '--journey': progress } as React.CSSProperties} aria-hidden="true">
           <div className="experience-aura" />
           <div className="experience-ring ring-a" /><div className="experience-ring ring-b" />
-          <div className="experience-core"><img src={brandIsotypeSrc} alt="" /></div>
-          <div className="experience-reflection"><img src={brandIsotypeSrc} alt="" /></div>
+          <div className="experience-core"><img src={brandIsotypeSrc} alt="" width="340" height="265" /></div>
+          <div className="experience-reflection"><img src={brandIsotypeSrc} alt="" width="340" height="265" /></div>
         </div>
 
         <div className="experience-copy">
