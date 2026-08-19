@@ -24,6 +24,7 @@ import {
 const BASE_URL = import.meta.env.BASE_URL
 const brandIsotypeSrc = `${BASE_URL}isotipo-quiroz.jpg`
 const PHOTO_SRC = `${BASE_URL}bryan-quiroz.jpg`
+const CASA_PACO_HERO = `${BASE_URL}casa-paco-fachada.webp`
 
 const projects = [
   {
@@ -257,6 +258,8 @@ function Interactive3DShowcase() {
     let height = 0
     let px = 0
     let py = 0
+    let running = false
+    let sceneVisible = false
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const stars = Array.from({ length: 86 }, (_, i) => ({ x: ((i * 73) % 997) / 997, y: ((i * 151) % 613) / 613, size: .4 + (i % 4) * .35, phase: i * .71 }))
 
@@ -306,14 +309,37 @@ function Interactive3DShowcase() {
         context.strokeStyle = `rgba(229,177,96,${.18 * (1 - p) + .025})`; context.lineWidth = .5 + p
         context.beginPath(); context.moveTo(width / 2 - spread + wave, y); context.lineTo(width / 2 + spread + wave, y); context.stroke()
       }
-      if (!reduceMotion) frame = requestAnimationFrame(draw)
+      if (!reduceMotion && running) frame = requestAnimationFrame(draw)
     }
     const onPointer = (event: PointerEvent) => {
       px = event.clientX / window.innerWidth - .5; py = event.clientY / window.innerHeight - .5
       scene.style.setProperty('--scene-x', `${px * 20}px`); scene.style.setProperty('--scene-y', `${py * 13}px`)
     }
-    resize(); window.addEventListener('resize', resize); window.addEventListener('pointermove', onPointer, { passive: true }); draw(0)
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('resize', resize); window.removeEventListener('pointermove', onPointer) }
+    const start = () => {
+      if (reduceMotion) { draw(0); return }
+      if (running || document.hidden || !sceneVisible) return
+      running = true
+      frame = requestAnimationFrame(draw)
+    }
+    const stop = () => { running = false; cancelAnimationFrame(frame) }
+    const visibility = () => { if (document.hidden) stop(); else start() }
+    const sceneObserver = new IntersectionObserver(([entry]) => {
+      sceneVisible = entry.isIntersecting
+      if (sceneVisible) start(); else stop()
+    }, { threshold: .01 })
+
+    resize()
+    sceneObserver.observe(scene)
+    window.addEventListener('resize', resize)
+    window.addEventListener('pointermove', onPointer, { passive: true })
+    document.addEventListener('visibilitychange', visibility)
+    return () => {
+      stop()
+      sceneObserver.disconnect()
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('pointermove', onPointer)
+      document.removeEventListener('visibilitychange', visibility)
+    }
   }, [])
 
   return (
@@ -328,6 +354,74 @@ function Interactive3DShowcase() {
       <div className="scene-coordinate coordinate-left">QUIROZ / NAVARRA<br />42.8125° N</div>
       <div className="scene-coordinate coordinate-right">DIGITAL CRAFT<br />EST. 2026</div>
     </div>
+  )
+}
+
+function WireframeBuildExperience() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    let frame = 0
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    const update = () => {
+      frame = 0
+      const bounds = section.getBoundingClientRect()
+      const distance = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, -bounds.top / distance))
+      const stage = progress < .22 ? 'estructura' : progress < .47 ? 'tipografia' : progress < .72 ? 'identidad' : 'real'
+      section.style.setProperty('--build', progress.toFixed(4))
+      section.dataset.stage = stage
+    }
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+    }
+  }, [])
+
+  return (
+    <section className="build-experience" ref={sectionRef} aria-labelledby="build-title" data-stage="estructura">
+      <div className="build-sticky">
+        <div className="build-meta" aria-hidden="true">
+          <span>SECTION 01</span><span>1440 / 12 COL</span><span>GRID 24 PX</span>
+        </div>
+        <div className="build-copy">
+          <p className="eyebrow"><span /> Del criterio al resultado</p>
+          <h2 id="build-title">No enseño un proceso.<br /><em>Lo construyo delante de ti.</em></h2>
+        </div>
+        <div className="build-stage" aria-label="La estructura de una web se transforma progresivamente en el proyecto real Casa Paco">
+          <div className="build-grid" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <i key={index} />)}</div>
+          <div className="build-browser">
+            <div className="build-browser-bar"><i /><i /><i /><span>casapaco.es</span></div>
+            <div className="build-site">
+              <div className="build-nav"><b>CASA PACO</b><div><span>El restaurante</span><span>La carta</span><span>Reservas</span></div><button type="button" tabIndex={-1}>Reservar</button></div>
+              <div className="build-content">
+                <div className="build-text">
+                  <small>COCINA · PAMPLONA</small>
+                  <h3>La mesa de siempre.<br />Una forma nueva de llegar.</h3>
+                  <p>Cocina honesta, ambiente cercano y una presencia digital pensada para convertir una visita en una reserva.</p>
+                  <span className="build-cta">Descubrir Casa Paco</span>
+                </div>
+                <figure><img src={CASA_PACO_HERO} alt="Fachada de Casa Paco en Pamplona" width="1024" height="1536" loading="lazy" decoding="async" /><figcaption>Proyecto real · Casa Paco</figcaption></figure>
+              </div>
+            </div>
+            <div className="build-measure measure-x">24 PX</div>
+            <div className="build-measure measure-y">AUTO</div>
+          </div>
+        </div>
+        <div className="build-progress" aria-hidden="true"><i /><span className="label-structure">Estructura</span><span className="label-type">Tipografía</span><span className="label-brand">Identidad</span><span className="label-real">Web real</span></div>
+      </div>
+    </section>
   )
 }
 
@@ -425,14 +519,16 @@ export function QuirozHero() {
       <section className="manifesto section-pad">
         <div className="section-number">01 / Enfoque</div>
         <div className="manifesto-copy reveal">
-          <p className="eyebrow"><span /> No hago páginas bonitas</p>
-          <h2>Construyo la percepción que tu negocio <em>merece.</em></h2>
+          <p className="eyebrow"><span /> Menos explicación. Más evidencia.</p>
+          <h2>Tu web debe hacer sentir tu negocio <em>antes de visitarlo.</em></h2>
           <div className="manifesto-detail">
-            <p>Una buena web no empieza con colores. Empieza entendiendo por qué deberían elegirte a ti. Después, cada palabra, cada imagen y cada interacción trabajan para demostrarlo.</p>
+            <p>Primero ordeno lo importante. Después convierto estrategia, contenido y diseño en una experiencia clara que ayuda a elegirte.</p>
             <div className="pill-list"><span>Claridad</span><span>Carácter</span><span>Conversión</span></div>
           </div>
         </div>
       </section>
+
+      <WireframeBuildExperience />
 
       <section id="identidad" className="brand-world section-pad">
         <div className="brand-world-copy reveal">
