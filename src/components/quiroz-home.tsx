@@ -17,12 +17,12 @@ const assets = {
 }
 
 const projects = [
-  { name: 'Casa Paco', type: 'Web · Hostelería', image: assets.casa, href: 'https://github.com/Padrearatosblog/casapaco-demo', className: 'qh-project--wide' },
-  { name: 'Karla Castañeda', type: 'Web · Bienestar', image: assets.karla, href: 'https://github.com/Padrearatosblog/karla.casta-eda' },
-  { name: 'Maitagarri', type: 'Campaña · San Fermín', image: assets.maitagarri, href: 'https://github.com/Padrearatosblog/maitagarri.sanfermin' },
-  { name: 'North Division', type: 'Concept / Demo', image: assets.north, href: 'https://github.com/Padrearatosblog/north.division', className: 'qh-project--wide' },
-  { name: 'Nacimientos Quiroz', type: 'Experiencia · Memoria', image: assets.nacimientos, href: 'https://github.com/Padrearatosblog/nacimientos.quiroz' },
-  { name: 'Raíces', type: 'Escritura · Privacidad', image: assets.raices, href: 'https://github.com/Padrearatosblog/raices-quiroz' },
+  { name: 'Casa Paco', type: 'Web · Hostelería', image: assets.casa, href: 'https://casapacopamplona.com/', className: 'qh-project--wide' },
+  { name: 'Karla Castañeda', type: 'Web · Bienestar', image: assets.karla, href: 'https://kcmasajesybelleza.es/' },
+  { name: 'Maitagarri', type: 'Campaña · San Fermín', image: assets.maitagarri, href: 'https://padrearatosblog.github.io/maitagarri.sanfermin/' },
+  { name: 'North Division', type: 'Concept / Demo', image: assets.north, href: 'https://padrearatosblog.github.io/north.division/', className: 'qh-project--wide' },
+  { name: 'Nacimientos Quiroz', type: 'Experiencia · Memoria', image: assets.nacimientos, href: 'https://padrearatosblog.github.io/nacimientos.quiroz/' },
+  { name: 'Raíces', type: 'Escritura · Privacidad', image: assets.raices, href: 'https://padrearatosblog.github.io/raices-quiroz/' },
 ]
 
 export function QuirozHome() {
