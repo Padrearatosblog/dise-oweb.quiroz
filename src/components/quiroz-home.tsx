@@ -9,7 +9,7 @@ const assets = {
   materials: `${BASE}quiroz-editorial-materials.webp`,
   portrait: `${BASE}bryan-quiroz.jpg`,
   casa: `${BASE}casa-paco-fachada.webp`,
-  karla: `${BASE}portfolio/karla.webp`,
+  karla: `${BASE}portfolio/karla-masaje.webp`,
   maitagarri: `${BASE}portfolio/maitagarri.webp`,
   north: `${BASE}portfolio/north.webp`,
   nacimientos: `${BASE}portfolio/nacimientos.webp`,
@@ -18,7 +18,7 @@ const assets = {
 
 const projects = [
   { name: 'Casa Paco', type: 'Web · Hostelería', image: assets.casa, href: 'https://casapacopamplona.com/', className: 'qh-project--wide' },
-  { name: 'Karla Castañeda', type: 'Web · Bienestar', image: assets.karla, href: 'https://kcmasajesybelleza.es/' },
+  { name: 'Karla Castañeda', type: 'Web · Bienestar', image: assets.karla, imageAlt: 'Karla Castañeda realizando un masaje profesional en camilla', href: 'https://kcmasajesybelleza.es/' },
   { name: 'Maitagarri', type: 'Campaña · San Fermín', image: assets.maitagarri, href: 'https://padrearatosblog.github.io/maitagarri.sanfermin/' },
   { name: 'North Division', type: 'Concept / Demo', image: assets.north, href: 'https://padrearatosblog.github.io/north.division/', className: 'qh-project--wide' },
   { name: 'Nacimientos Quiroz', type: 'Experiencia · Memoria', image: assets.nacimientos, href: 'https://padrearatosblog.github.io/nacimientos.quiroz/' },
@@ -88,7 +88,7 @@ export function QuirozHome() {
 
       <section id="proyectos" className="qh-work">
         <header className="qh-work-head qh-reveal"><div><p className="qh-kicker">Trabajo seleccionado</p><h2>No repito fórmulas.<br /><em>Diseño para cada historia.</em></h2></div><p>Hostelería, bienestar, industria y proyectos personales. La dirección cambia; el criterio permanece.</p></header>
-        <div className="qh-grid">{projects.map((project, index) => <a className={`qh-project qh-reveal ${project.className ?? ''}`} href={project.href} target="_blank" rel="noreferrer" key={project.name}><figure><img src={project.image} alt={`Proyecto ${project.name} diseñado por Quiroz`} loading="lazy" decoding="async" /></figure><div><span>0{index + 1} / {project.type}</span><h3>{project.name}</h3><ArrowUpRight /></div></a>)}</div>
+        <div className="qh-grid">{projects.map((project, index) => <a className={`qh-project qh-reveal ${project.className ?? ''}`} href={project.href} target="_blank" rel="noreferrer" key={project.name}><figure><img src={project.image} alt={'imageAlt' in project ? project.imageAlt : `Proyecto ${project.name} diseñado por Quiroz`} loading="lazy" decoding="async" /></figure><div><span>0{index + 1} / {project.type}</span><h3>{project.name}</h3><ArrowUpRight /></div></a>)}</div>
       </section>
 
       <section id="sobre-mi" className="qh-about">
