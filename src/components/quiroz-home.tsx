@@ -25,6 +25,45 @@ const projects = [
   { name: 'Raíces', type: 'Escritura · Privacidad', image: assets.raices, href: 'https://padrearatosblog.github.io/raices-quiroz/' },
 ]
 
+function QuirozIntro() {
+  const [visible, setVisible] = useState(true)
+  const [exiting, setExiting] = useState(false)
+
+  useEffect(() => {
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 450 : 2750)
+    const closeTimer = window.setTimeout(() => setVisible(false), reducedMotion ? 750 : 3350)
+    return () => {
+      clearTimeout(exitTimer)
+      clearTimeout(closeTimer)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!visible) document.body.style.overflow = ''
+  }, [visible])
+
+  if (!visible) return null
+  const skip = () => { setExiting(true); window.setTimeout(() => setVisible(false), 450) }
+
+  return (
+    <div className={`qh-intro${exiting ? ' is-exiting' : ''}`} role="dialog" aria-modal="true" aria-label="Presentación de Quiroz Digital Studio">
+      <div className="qh-intro-light" aria-hidden="true" />
+      <div className="qh-intro-frame" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="qh-intro-brand">
+        <div className="qh-intro-mark"><span aria-hidden="true" /><img src={assets.mark} alt="" width="340" height="265" /></div>
+        <div className="qh-intro-name"><strong>QUIROZ</strong><span>Digital Studio</span><small>Webs con esencia para negocios reales</small></div>
+        <div className="qh-intro-signature"><span>Bryans Astorga</span><small>Diseñador web · Pamplona</small></div>
+      </div>
+      <div className="qh-intro-progress" aria-hidden="true"><i /></div>
+      <button type="button" onClick={skip}>Saltar intro <X /></button>
+    </div>
+  )
+}
+
 export function QuirozHome() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => localStorage.getItem('quiroz-theme') === 'dark' ? 'dark' : 'light')
@@ -60,6 +99,7 @@ export function QuirozHome() {
 
   return (
     <main className="qh-shell">
+      <QuirozIntro />
       <header className="qh-header">
         <a className="qh-brand" href="#inicio" aria-label="Quiroz, inicio"><img src={assets.mark} alt="" width="340" height="265" /><span>QUIROZ<small>Digital Studio</small></span></a>
         <nav className="qh-nav" aria-label="Navegación principal"><a href="#servicios">Servicios</a><a href="#proyectos">Proyectos</a><a href="#sobre-mi">Sobre mí</a></nav>
